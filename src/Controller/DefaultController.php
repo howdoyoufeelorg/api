@@ -19,7 +19,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route as Route;
-use Symfony\Component\Serializer\Serializer;
 
 class DefaultController extends AbstractController
 {
@@ -84,6 +83,7 @@ class DefaultController extends AbstractController
         // If found, just store survey
         $hash = $data['hash'];
         $answers = $data['answers'];
+        $geolocation = $data['geolocation'];
         $token = (new Parser())->parse((string) $hash);
         if($token->getClaim('iss') !== $this->tokenIssuer) {
             $response->setStatusCode(500);
@@ -95,11 +95,11 @@ class DefaultController extends AbstractController
             $visitor = $this->entityManager->getRepository(Visitor::class)->findOneBy(['hash' => $visitorUid]);
             if(! $visitor instanceof Visitor) {
                 $visitor = new Visitor($visitorUid);
-                $visitor->setIp($request->getClientIp());
-                $visitor->setLatitude(0);
-                $visitor->setLongitude(0);
                 $this->entityManager->persist($visitor);
             }
+            $visitor->setIp($request->getClientIp());
+            $visitor->setLatitude($geolocation['latitude'] ? $geolocation['latitude'] : 0);
+            $visitor->setLongitude($geolocation['longitude'] ? $geolocation['longitude'] : 0);
             // Process $answers
             $survey = new Survey();
             $this->entityManager->persist($survey);
