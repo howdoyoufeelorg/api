@@ -19,13 +19,15 @@ class QuestionRepository extends ServiceEntityRepository
         parent::__construct($registry, Question::class);
     }
 
+    /**
+     * @return Question[]
+     */
     public function findEnabledQuestions()
     {
         $qb = $this->createQueryBuilder('q');
         $qb->where('q.disabled != 1');
         $qb->orderBy('q.questionNo');
         $query = $qb->getQuery();
-        $query->setHydrationMode(AbstractQuery::HYDRATE_ARRAY);
         return $query->execute();
     }
 }

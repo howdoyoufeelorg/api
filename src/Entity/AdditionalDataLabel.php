@@ -7,22 +7,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation as API;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="question_labels")
- * @API\ApiResource(
+ * @ORM\Table(name="additional_data_labels")
+ * @ApiResource(
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @API\ApiFilter(SearchFilter::class, properties={"id": "exact", "question_id": "exact"})
  * @Gedmo\Loggable
  */
-class QuestionLabel extends AbstractLabel
+class AdditionalDataLabel extends AbstractLabel
 {
 
 }

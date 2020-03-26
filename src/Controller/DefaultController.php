@@ -19,6 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route as Route;
+use Symfony\Component\Serializer\Serializer;
 
 class DefaultController extends AbstractController
 {
@@ -128,9 +129,32 @@ class DefaultController extends AbstractController
      */
     public function getQuestions()
     {
-        $questions = $this->entityManager->getRepository(Question::class)->findEnabledQuestions();
+        $questions = [];
+        $questions_db = $this->entityManager->getRepository(Question::class)->findEnabledQuestions();
+        foreach($questions_db as $q) {
+            /** @var Question $q */
+            $labels = [];
+            foreach($q->getLabels() as $label) {
+                $labels[$label->getLanguage()] = $label->getLabel();
+            }
+            $additionalDataLabels = [];
+            foreach($q->getAdditionalDataLabels() as $label) {
+                $additionalDataLabels[$label->getLanguage()] = $label->getLabel();
+            }
+            $questions[] = [
+                'id' => $q->getId(),
+                'questionNo' => $q->getQuestionNo(),
+                'questionWeight' => $q->getQuestionWeight(),
+                'type' => $q->getType(),
+                'labels' => $labels,
+                'required' => $q->getRequired(),
+                'requiresAdditionalData' => $q->getRequiresAdditionalData(),
+                'additionalDataType' => $q->getAdditionalDataType(),
+                'additionalDataLabels' => $additionalDataLabels,
+            ];
+        }
         return new JsonResponse([
-                "questions" => $questions,
+            "questions" => $questions
         ]);
     }
 

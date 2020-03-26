@@ -25,6 +25,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Question
 {
+    const TYPE_SLIDER = 'slider';
+    const TYPE_YESNO = 'yesno';
+    const TYPE_ENTRY = 'entry';
+
     use TimestampableEntity;
 
     /**
@@ -34,12 +38,12 @@ class Question
      */
     private $id;
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read", "write"})
      */
     private $questionNo;
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read", "write"})
      */
     private $questionWeight;
@@ -74,10 +78,10 @@ class Question
      */
     private $additionalDataType;
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\AdditionalDataLabel", mappedBy="question")
      * @Groups({"read", "write"})
      */
-    private $additionalDataLabel;
+    private $additionalDataLabels;
     /**
      * @ORM\Column(type="boolean")
      * @Groups({"read", "write"})
@@ -87,6 +91,14 @@ class Question
      * @ORM\OneToMany(targetEntity="App\Entity\Answer", mappedBy="question")
      */
     private $answers;
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'questionNo' => $this->getQuestionNo(),
+        ];
+    }
 
     /**
      * @return mixed
@@ -151,7 +163,7 @@ class Question
     }
 
     /**
-     * @return mixed
+     * @return QuestionLabel[]
      */
     public function getLabels()
     {
@@ -244,18 +256,19 @@ class Question
     /**
      * @return mixed
      */
-    public function getAdditionalDataLabel()
+    public function getAdditionalDataLabels()
     {
-        return $this->additionalDataLabel;
+        return $this->additionalDataLabels;
     }
 
     /**
-     * @param mixed $additionalDataLabel
+     * @param AdditionalDataLabel $additionalDataLabel
      * @return Question
      */
-    public function setAdditionalDataLabel($additionalDataLabel)
+    public function addAdditionalDataLabel(AdditionalDataLabel $additionalDataLabel)
     {
-        $this->additionalDataLabel = $additionalDataLabel;
+        $additionalDataLabel->setQuestion($this);
+        $this->additionalDataLabels[] = $additionalDataLabel;
         return $this;
     }
 
