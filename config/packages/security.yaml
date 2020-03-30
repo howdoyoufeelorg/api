@@ -17,6 +17,9 @@ security:
         public:
             pattern: ^/(get-(hash|questions|instructions)|post-survey)
             security: false
+        superadmin:
+            pattern: ^/(users|superadmin)
+            security: false
         main:
             stateless: true
             anonymous: true

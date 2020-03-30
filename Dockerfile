@@ -15,12 +15,14 @@ RUN apt-get update -y && \
     autoconf \
     gcc && \
     /bin/bash /build-scripts/apt-cleanup.sh
-RUN pecl install xdebug
+
+# XDEBUG - turn it on if needed. Also uncomment lines in php.ini in root dir.
+#RUN pecl install xdebug
 
 RUN /build-scripts/composer.sh
 
 # SUPERVISORD additional config
-#COPY supervisor/conf.d/zira-worker.conf /etc/supervisor/conf.d/zira-worker.conf
+COPY additional-supervisord.conf /etc/supervisor/conf.d/additional-supervisord.conf
 
 # CUSTOM ENTRYPOINT (will also trigger the default Google entrypoint
 RUN mkdir /additional-build-scripts

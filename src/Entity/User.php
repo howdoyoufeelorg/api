@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Iterator;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -19,6 +20,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class User implements UserInterface
 {
+    const ROLE_ADMIN = 'ROLE_ADMIN';
+    const ROLE_SUPERADMIN = 'ROLE_SUPERADMIN';
+    const ROLE_EDITOR = 'ROLE_EDITOR';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -61,14 +66,22 @@ class User implements UserInterface
      */
     private $lastname;
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "write"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Area", mappedBy="users")
+     * @Groups({"read"})
      */
-    private $area;
+    private $areas;
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Instruction", mappedBy="createdBy")
      */
     private $instructions;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $registrationHash;
+    /**
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    private $confirmed = false;
 
     public function getId(): ?int
     {
@@ -103,9 +116,6 @@ class User implements UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
@@ -203,20 +213,21 @@ class User implements UserInterface
     }
 
     /**
-     * @return mixed
+     * @return Iterator
      */
-    public function getArea()
+    public function getAreas()
     {
-        return $this->area;
+        return $this->areas;
     }
 
     /**
-     * @param mixed $area
+     * @param Area $area
      * @return User
      */
-    public function setArea($area)
+    public function addArea(Area $area)
     {
-        $this->area = $area;
+        $area->addUser($this);
+        $this->areas[] = $area;
         return $this;
     }
 
@@ -235,6 +246,42 @@ class User implements UserInterface
     public function setInstructions($instructions)
     {
         $this->instructions = $instructions;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRegistrationHash()
+    {
+        return $this->registrationHash;
+    }
+
+    /**
+     * @param mixed $registrationHash
+     * @return User
+     */
+    public function setRegistrationHash($registrationHash)
+    {
+        $this->registrationHash = $registrationHash;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConfirmed(): bool
+    {
+        return $this->confirmed;
+    }
+
+    /**
+     * @param bool $confirmed
+     * @return User
+     */
+    public function setConfirmed(bool $confirmed): User
+    {
+        $this->confirmed = $confirmed;
         return $this;
     }
 }

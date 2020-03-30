@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% if errors|length %}
+        <div>The auth process ended up with errors:</div>
+        <ul>
+        {% for error in errors %}
+            <li>{{ error.error }}: {{ error.error_description }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <div>The auth process ended up with success. The refresh token is stored, and you should be good to go.</div>
+    {% endif %}
+{% endblock %}

@@ -110,11 +110,44 @@
     "doctrine/reflection": {
         "version": "v1.1.0"
     },
+    "egulias/email-validator": {
+        "version": "2.1.17"
+    },
     "fig/link-util": {
         "version": "1.1.0"
     },
+    "firebase/php-jwt": {
+        "version": "v5.2.0"
+    },
     "gedmo/doctrine-extensions": {
         "version": "v2.4.39"
+    },
+    "google/apiclient": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "2.0",
+            "ref": "49c5d7a66d863d28513979bf0666dc77599100c0"
+        },
+        "files": [
+            "config/packages/google_apiclient.yaml"
+        ]
+    },
+    "google/apiclient-services": {
+        "version": "v0.127"
+    },
+    "google/auth": {
+        "version": "v1.8.0"
+    },
+    "guzzlehttp/guzzle": {
+        "version": "6.5.2"
+    },
+    "guzzlehttp/promises": {
+        "version": "v1.3.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.6.1"
     },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
@@ -133,6 +166,9 @@
         "files": [
             "config/packages/lexik_jwt_authentication.yaml"
         ]
+    },
+    "monolog/monolog": {
+        "version": "2.0.2"
     },
     "namshi/jose": {
         "version": "7.2.3"
@@ -170,17 +206,26 @@
     "phpdocumentor/type-resolver": {
         "version": "1.1.0"
     },
+    "phpseclib/phpseclib": {
+        "version": "2.0.26"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
     "psr/container": {
         "version": "1.0.0"
     },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/link": {
         "version": "1.0.0"
     },
     "psr/log": {
         "version": "1.1.2"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
     },
     "stof/doctrine-extensions-bundle": {
         "version": "1.2",
@@ -193,6 +238,9 @@
         "files": [
             "config/packages/stof_doctrine_extensions.yaml"
         ]
+    },
+    "swiftmailer/swiftmailer": {
+        "version": "v6.2.3"
     },
     "symfony/asset": {
         "version": "v4.4.5"
@@ -299,6 +347,18 @@
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
     },
+    "symfony/messenger": {
+        "version": "4.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.3",
+            "ref": "8a2675c061737658bed85102e9241c752620e575"
+        },
+        "files": [
+            "config/packages/messenger.yaml"
+        ]
+    },
     "symfony/mime": {
         "version": "v5.0.5"
     },
@@ -366,6 +426,20 @@
     },
     "symfony/stopwatch": {
         "version": "v5.0.5"
+    },
+    "symfony/swiftmailer-bundle": {
+        "version": "2.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.5",
+            "ref": "ae4d22af30bbd484506bc1817c5a3ef72c855b93"
+        },
+        "files": [
+            "config/packages/dev/swiftmailer.yaml",
+            "config/packages/swiftmailer.yaml",
+            "config/packages/test/swiftmailer.yaml"
+        ]
     },
     "symfony/translation-contracts": {
         "version": "v2.0.1"

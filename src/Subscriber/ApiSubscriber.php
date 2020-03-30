@@ -8,6 +8,7 @@
 namespace App\Subscriber;
 
 use App\Controller\DefaultController;
+use App\Controller\UserController;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -16,7 +17,6 @@ class ApiSubscriber implements EventSubscriberInterface
 {
     public function onKernelController(ControllerEvent $event)
     {
-        return;
         $controller = $event->getController();
 
         /*
@@ -27,12 +27,15 @@ class ApiSubscriber implements EventSubscriberInterface
         if (!is_array($controller)) {
             return;
         }
+        $method = $controller[1];
+        $controller = $controller[0];
 
-        if($controller[0] == DefaultController::class) {
+        if($controller instanceof DefaultController || $controller instanceof UserController) {
             $request = $event->getRequest();
-            if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+            $contentType = $request->headers->get('Content-Type');
+            if (0 === strpos($contentType, 'application/json')) {
                 $data = json_decode($request->getContent(), true);
-                $request->request->replace(is_array($data) ? $data : array());
+                $request->request->replace(is_array($data) ? $data : []);
             }
         }
     }

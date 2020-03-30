@@ -53,6 +53,10 @@ class Area
      * @ORM\OneToMany(targetEntity="App\Entity\Instruction", mappedBy="area")
      */
     private $instructions;
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="areas")
+     */
+    private $users;
 
     /**
      * @return mixed
@@ -131,6 +135,24 @@ class Area
     public function setInstructions($instructions)
     {
         $this->instructions = $instructions;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
+
+    /**
+     * @param User $user
+     * @return Area
+     */
+    public function addUser(User $user)
+    {
+        $this->users[] = $user;
         return $this;
     }
 }
