@@ -1,0 +1,33 @@
+runtime: php
+env: flex
+
+runtime_config:
+    document_root: public
+    front_controller_file: index.php
+
+env_variables:
+    APP_ENV: prod
+    SYMFONY_ENV: prod
+    DATABASE_URL: mysql://root:1mISWg90@localhost/m_platform?serverVersion=5.7&unix_socket=/cloudsql/m-app-3:us-central1:m-app-3
+    GOOGLE_CLIENT_API_KEY: AIzaSyAk-ib5fQkqBy3tKjhHVhTjQGIseT-rlXk
+    GOOGLE_CLIENT_ID: 330743383150-has11isf1fr54uq9hn6d536qrfftfs6o.apps.googleusercontent.com
+    GOOGLE_CLIENT_SECRET: IeSiKpu00BGt7oBNk7RJAFxE
+
+handlers:
+    - url: /.*
+      script: auto
+      secure: always
+
+beta_settings:
+    cloud_sql_instances: "m-app-3:us-central1:m-app-3"
+
+# Do not deploy bundle tests
+skip_files:
+    - (.*/)?Tests\/(.*)
+
+manual_scaling:
+    instances: 1
+resources:
+    cpu: 1
+    memory_gb: 0.5
+    disk_size_gb: 10
