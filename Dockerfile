@@ -28,9 +28,12 @@ COPY composer.json /app/composer.json
 COPY composer.lock /app/composer.lock
 COPY symfony.lock /app/symfony.lock
 COPY php.ini /app/php.ini
+COPY .env /app/.env
 
 RUN mkdir /app/var
 RUN mkdir /app/var/cache
+
+RUN chown -R www-data /app
 
 RUN /build-scripts/composer.sh
 
