@@ -19,6 +19,19 @@ RUN apt-get update -y && \
 # XDEBUG - turn it on if needed. Also uncomment lines in php.ini in root dir.
 #RUN pecl install xdebug
 
+COPY bin/ /app/bin/
+COPY config/ /app/config/
+COPY public/ /app/public/
+COPY src/ /app/src/
+COPY templates/ /app/templates/
+COPY composer.json /app/composer.json
+COPY composer.lock /app/composer.lock
+COPY symfony.lock /app/symfony.lock
+COPY php.ini /app/php.ini
+
+RUN mkdir /app/var
+RUN mkdir /app/var/cache
+
 RUN /build-scripts/composer.sh
 
 # SUPERVISORD additional config
