@@ -10,7 +10,7 @@ steps:
 #      secretEnv: ['ENV_JWT_PASSPHRASE', 'GOOGLE_API_KEY', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']
     - name: 'gcr.io/cloud-builders/gcloud'
       args: ['app', 'deploy']
-      timeout: "1600s"
+      timeout: "600s"
 #secrets:
 #    - kmsKeyName: projects/m-app-3/locations/global/keyRings/HowDoYouFeel/cryptoKeys/mainKey
 #      secretEnv:
