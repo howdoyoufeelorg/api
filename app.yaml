@@ -11,6 +11,7 @@ env_variables:
     SYMFONY_ENV: prod
     DATABASE_URL: mysql://root:1mISWg90@localhost/hdyf_db?serverVersion=5.7&unix_socket=/cloudsql/m-app-3:us-central1:m-app-3
     CORS_ALLOW_ORIGIN: ^https?:\/\/hdyf-(.*)-dot-m-app-3\.appspot\.com$
+    JWT_PASSPHRASE: $JWT_PASSPHRASE
 
 handlers:
     - url: /.*
