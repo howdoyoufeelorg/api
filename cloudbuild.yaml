@@ -1,7 +1,15 @@
 steps:
+    - name: 'gcr.io/gcp-runtimes/php/gen-dockerfile:latest'
+      args: ['--php72-image', 'gcr.io/google-appengine/php72:latest', '--php71-image', 'gcr.io/google-appengine/php71:latest']
+      env: ['GAE_APPLICATION_YAML_PATH=$_GAE_APPLICATION_YAML_PATH']
+#    - name: 'gcr.io/kaniko-project/executor:v0.6.0'
+#      args: ['--destination=$_OUTPUT_IMAGE']
+#      env: ['GAE_APPLICATION_YAML_PATH=$_GAE_APPLICATION_YAML_PATH']
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-t', 'gcr.io/m-app-3/hdyf-api', '.']
+      secretEnv: ['JWT_PASSPHRASE', 'GOOGLE_API_KEY', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']
     - name: 'gcr.io/cloud-builders/gcloud'
       args: ['app', 'deploy']
-      secretEnv: ['JWT_PASSPHRASE', 'GOOGLE_API_KEY', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']
 timeout: "1600s"
 secrets:
     - kmsKeyName: projects/m-app-3/locations/global/keyRings/HowDoYouFeel/cryptoKeys/mainKey
