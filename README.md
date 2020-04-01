@@ -42,3 +42,10 @@ These fixtures can be run from with the container, like so
 ```bash 
 $ docker exec -it <api_container_name> bin/console doctrine:fixtures:load 
 ```
+
+## Test from browser
+A very simple test would be to access this url in your browser:
+
+http://localhost:8080/api/docs
+
+It should give you the swagger-api documentation.
