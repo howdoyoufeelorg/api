@@ -1,9 +1,7 @@
 steps:
-    - name: 'gcr.io/cloud-builders/docker'
-      args: ['build', '-t', 'gcr.io/m-app-3/hdyf-api', '.']
-      secretEnv: ['JWT_PASSPHRASE', 'GOOGLE_API_KEY', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']
     - name: 'gcr.io/cloud-builders/gcloud'
       args: ['app', 'deploy']
+      secretEnv: ['JWT_PASSPHRASE', 'GOOGLE_API_KEY', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']
 timeout: "1600s"
 secrets:
     - kmsKeyName: projects/m-app-3/locations/global/keyRings/HowDoYouFeel/cryptoKeys/mainKey
