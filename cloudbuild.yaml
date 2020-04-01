@@ -1,20 +1,20 @@
 steps:
-    - name: 'gcr.io/gcp-runtimes/php/gen-dockerfile:latest'
-      args: ['--php72-image', 'gcr.io/google-appengine/php72:latest', '--php71-image', 'gcr.io/google-appengine/php71:latest']
-      env: ['GAE_APPLICATION_YAML_PATH=$_GAE_APPLICATION_YAML_PATH']
+#    - name: 'gcr.io/gcp-runtimes/php/gen-dockerfile:latest'
+#      args: ['--php72-image', 'gcr.io/google-appengine/php72:latest', '--php71-image', 'gcr.io/google-appengine/php71:latest']
+#      env: ['GAE_APPLICATION_YAML_PATH=$_GAE_APPLICATION_YAML_PATH']
 #    - name: 'gcr.io/kaniko-project/executor:v0.6.0'
 #      args: ['--destination=$_OUTPUT_IMAGE']
 #      env: ['GAE_APPLICATION_YAML_PATH=$_GAE_APPLICATION_YAML_PATH']
     - name: 'gcr.io/cloud-builders/docker'
-      args: ['build', '-t', 'gcr.io/m-app-3/hdyf-api', '--build-arg' , 'JWT_PASSPHRASE', '.']
-      secretEnv: ['JWT_PASSPHRASE', 'GOOGLE_API_KEY', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']
+      args: ['build', '-t', 'gcr.io/m-app-3/hdyf-api', '--build-arg' , 'ENV_JWT_PASSPHRASE', '.']
+      secretEnv: ['ENV_JWT_PASSPHRASE', 'GOOGLE_API_KEY', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET']
     - name: 'gcr.io/cloud-builders/gcloud'
       args: ['app', 'deploy']
 timeout: "1600s"
 secrets:
     - kmsKeyName: projects/m-app-3/locations/global/keyRings/HowDoYouFeel/cryptoKeys/mainKey
       secretEnv:
-          JWT_PASSPHRASE: CiQA3LL1ljkA6b9UhP/s60J1wWqUz4KWVqTSYwNAu40QgFh26i4SSQARH4opvB6W2sRbHLqD+l5E/q+5iGNoZvrOcq/pfl5WYwcWDyiEUmISxIyhAp+1Y7jo6DfY9y14Fuzs2lTt5XxktAJbisMiPmg=
+          ENV_JWT_PASSPHRASE: CiQA3LL1ljkA6b9UhP/s60J1wWqUz4KWVqTSYwNAu40QgFh26i4SSQARH4opvB6W2sRbHLqD+l5E/q+5iGNoZvrOcq/pfl5WYwcWDyiEUmISxIyhAp+1Y7jo6DfY9y14Fuzs2lTt5XxktAJbisMiPmg=
           GOOGLE_API_KEY: CiQA3LL1lnfIWX/GtfsFtptUYMo1L0hS7fzLkpZAOOFy+R+x7qcSUAARH4opooBUQoLKB2qHIHNQa6yAGKE9j5uOdlSOvcmAmLXkIyN/iNIuqn23w01uPrz3OgFOVRAjEuHMNUzNJ/jdLSQFWEEt9El9z27DUzq4
           GOOGLE_CLIENT_ID: CiQA3LL1lkm3h06pwNwi4GmdC9TXGwhaV0ijS5kMXkcMRfxtuH8ScQARH4opTps0tMJ7g9P4wzht78Yjh+NbybzxOpF1NoU0/DSApqqI/d522PebQ7bj4sxMeDoM5d8D0P4jnI8EQnTXuo5eBkXajnGJhs3YiZNDGzl5/B3N99mRdNJjFr9B6QTPfuZw1Ixe/Cc/FOuv3Obw
           GOOGLE_CLIENT_SECRET: CiQA3LL1ltR5emAy4j+s4XMet2ODRSC6isH8DBxD2XUNlSJOCV4SQQARH4op0qrygOjCRxxXYDXeEzlXm8wlUHY5BXRlfRkSRW4fVMl0Lcw8QI1n03nLrZCAWPwIZOU3RwcVwl4W9FVh
