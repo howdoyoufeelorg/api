@@ -26,9 +26,16 @@ $ mkdir -p config/jwt
 $ openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
 $ openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout  
 ```
+If the systems asks for a passphrase, you need to give one - but this passphrase also needs to be set in the .env file. Or you can use the one from the .env file, it's local anyway.
 
 ## Creating the database
-You can use doctrine commands via docker to create the database in MySQL server. 
+The commands to create the database are:
+```bash 
+$ bin/console doctrine:database:create
+$ bin/console doctrine:schema:create 
+```
+Depending on your setup, you can execute these from local shell, or from within the docker container:
+
 ```bash 
 $ docker exec -it <api_container_name> bin/console doctrine:database:create
 $ docker exec -it <api_container_name> bin/console doctrine:schema:create 
@@ -37,6 +44,12 @@ $ docker exec -it <api_container_name> bin/console doctrine:schema:create
 ## Populating initial data
 Two fixtures are provided at this point. One will create a test admin that you can use to hit api with a request for JWT token, 
 and the other will create an initial set of questions for the survey.
+
+You can run the fixtures from the console:
+
+```bash 
+$ bin/console doctrine:fixtures:load 
+```
 
 These fixtures can be run from with the container, like so
 ```bash 
