@@ -48,7 +48,7 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'rs',
-                        'label' => 'Imate li poteskoca u disanju'
+                        'label' => 'Imate li poteškoća u disanju'
                     ]
                 ],
                 'required' => true,
@@ -68,7 +68,7 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'rs',
-                        'label' => 'Imate li povisenu temperaturu?'
+                        'label' => 'Imate li povišenu temperaturu?'
                     ]
                 ],
                 'required' => true,
@@ -123,7 +123,7 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'rs',
-                        'label' => 'Da li ste bili u bliskom kontaktu sa zarazenim?'
+                        'label' => 'Da li ste bili u bliskom kontaktu sa zaraženim?'
                     ]
                 ],
                 'required' => true,
@@ -160,7 +160,7 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'rs',
-                        'label' => 'Gde?'
+                        'label' => 'Gde ste bili?'
                     ]
                 ]
             ],
@@ -178,7 +178,7 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'rs',
-                        'label' => 'Da li imate hronicne zdravstvene probleme?'
+                        'label' => 'Da li imate hronične zdravstvene probleme?'
                     ]
                 ],
                 'required' => true,
@@ -198,7 +198,7 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'rs',
-                        'label' => 'Da li ste izgubili culo mirisa?'
+                        'label' => 'Da li ste izgubili čulo mirisa?'
                     ]
                 ],
                 'required' => true,
