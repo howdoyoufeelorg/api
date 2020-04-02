@@ -23,6 +23,10 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'es',
+                        'label' => 'En una escala de 1 a 10'
+                    ],
+                    [
+                        'language' => 'rs',
                         'label' => 'Na skali od 1 do 10'
                     ]
                 ],
@@ -40,6 +44,10 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'es',
+                        'label' => '¿Esta teniendo problemas para respirar?'
+                    ],
+                    [
+                        'language' => 'rs',
                         'label' => 'Imate li poteskoca u disanju'
                     ]
                 ],
@@ -56,6 +64,10 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'es',
+                        'label' => '¿Tiene fiebre?'
+                    ],
+                    [
+                        'language' => 'rs',
                         'label' => 'Imate li povisenu temperaturu?'
                     ]
                 ],
@@ -65,11 +77,15 @@ class QuestionFixtures extends Fixture
                 'additionalDataLabels' => [
                     [
                         'language' => 'en',
-                        'label' => 'Temperature?'
+                        'label' => 'What is Your Temperature?'
                     ],
                     [
                         'language' => 'es',
-                        'label' => 'Temperatura?'
+                        'label' => '¿cuál es su temperatura?'
+                    ],
+                    [
+                        'language' => 'rs',
+                        'label' => 'Kolika Vam je temperatura?'
                     ]
                 ]
             ],
@@ -83,6 +99,10 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'es',
+                        'label' => '¿Tiene 55 años de edad o más?'
+                    ],
+                    [
+                        'language' => 'rs',
                         'label' => 'Da li ste stariji od 55 godina?'
                     ]
                 ],
@@ -99,6 +119,10 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'es',
+                        'label' => '¿Usted ha estado en contacto cercano con personas con síntomas o que tienen el virus?'
+                    ],
+                    [
+                        'language' => 'rs',
                         'label' => 'Da li ste bili u bliskom kontaktu sa zarazenim?'
                     ]
                 ],
@@ -115,6 +139,10 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'es',
+                        'label' => '¿Usted ha viajado recientemente?'
+                    ],
+                    [
+                        'language' => 'rs',
                         'label' => 'Jeste li skorije putovali?'
                     ]
                 ],
@@ -124,10 +152,14 @@ class QuestionFixtures extends Fixture
                 'additionalDataLabels' => [
                     [
                         'language' => 'en',
-                        'label' => 'Where?'
+                        'label' => 'Where Did You Go?'
                     ],
                     [
                         'language' => 'es',
+                        'label' => '¿a dónde viajo?'
+                    ],
+                    [
+                        'language' => 'rs',
                         'label' => 'Gde?'
                     ]
                 ]
@@ -142,6 +174,10 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'es',
+                        'label' => '¿Tiene una condición de salud existente adicional?'
+                    ],
+                    [
+                        'language' => 'rs',
                         'label' => 'Da li imate hronicne zdravstvene probleme?'
                     ]
                 ],
@@ -158,6 +194,10 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'es',
+                        'label' => '¿Está experimentando pérdida de sabor u olor?'
+                    ],
+                    [
+                        'language' => 'rs',
                         'label' => 'Da li ste izgubili culo mirisa?'
                     ]
                 ],
@@ -174,7 +214,11 @@ class QuestionFixtures extends Fixture
                     ],
                     [
                         'language' => 'es',
-                        'label' => 'Kasljete li?'
+                        'label' => '¿Tiene tos?'
+                    ],
+                    [
+                        'language' => 'rs',
+                        'label' => 'Kašljete li?'
                     ]
                 ],
                 'required' => true,
