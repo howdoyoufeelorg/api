@@ -106,6 +106,7 @@ class DefaultController extends AbstractController
             $survey->setLanguage('en-US');
             $survey->setCountry($country['value']);
             $survey->setZipcode($zipcode['value']);
+            $sicknessIndex = 0;
             foreach($answers as $questionId => $surveyAnswer) {
                 $question = $this->entityManager->getRepository(Question::class)->find($questionId);
                 if($question instanceof Question) {
@@ -115,9 +116,10 @@ class DefaultController extends AbstractController
                     if(array_key_exists('additionalData', $surveyAnswer)) $answer->setAdditionalData($surveyAnswer['additionalData']);
                     $this->entityManager->persist($answer);
                     $survey->addAnswer($answer);
+                    $sicknessIndex += $this->calculateSicknessIndex($question, $surveyAnswer['answer']);
                 }
             }
-            $survey->setWellnessIndex($this->calculateWellnessIndex($answers));
+            $survey->setSicknessIndex($sicknessIndex);
             $visitor->addSurvey($survey);
             $this->entityManager->flush();
         }
@@ -166,9 +168,19 @@ class DefaultController extends AbstractController
         return new JsonResponse();
     }
 
-    private function calculateWellnessIndex(array $answers)
+    private function calculateSicknessIndex(Question $question, string $answer)
     {
-        // TODO: Calculate!
-        return 1234;
+        $score = 0;
+        if(is_numeric($answer)) {
+            $numericAnswer = (int)$answer;
+            $score = floor($question->getQuestionWeight() / $numericAnswer);
+        }
+        if(strtolower($answer) == 'no') {
+            $score = $question->getQuestionWeight() / 10;
+        }
+        if(strtolower($answer) == 'yes') {
+            $score = $question->getQuestionWeight();
+        }
+        return $score;
     }
 }

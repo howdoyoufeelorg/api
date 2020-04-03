@@ -66,7 +66,7 @@ class SurveyWriteTest extends Command
                 $survey->addAnswer($answer);
             }
         }
-        $survey->setWellnessIndex(111);
+        $survey->setSicknessIndex(111);
         $visitor->addSurvey($survey);
         $this->entityManager->flush();
         $output->writeln('DONE');

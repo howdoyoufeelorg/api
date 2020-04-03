@@ -56,7 +56,7 @@ class Survey
     /**
      * @ORM\Column(type="integer")
      */
-    private $wellnessIndex;
+    private $sicknessIndex;
 
     /**
      * @return mixed
@@ -188,18 +188,18 @@ class Survey
     /**
      * @return mixed
      */
-    public function getWellnessIndex()
+    public function getSicknessIndex()
     {
-        return $this->wellnessIndex;
+        return $this->sicknessIndex;
     }
 
     /**
-     * @param mixed $wellnessIndex
+     * @param mixed $sicknessIndex
      * @return Survey
      */
-    public function setWellnessIndex($wellnessIndex)
+    public function setSicknessIndex($sicknessIndex)
     {
-        $this->wellnessIndex = $wellnessIndex;
+        $this->sicknessIndex = $sicknessIndex;
         return $this;
     }
 }
