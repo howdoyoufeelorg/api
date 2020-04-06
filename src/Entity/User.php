@@ -93,6 +93,13 @@ class User implements UserInterface
      */
     private $confirmed = false;
 
+
+    public function getFullname()
+    {
+        return "$this->lastname, $this->firstname";
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;

@@ -8,6 +8,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
@@ -52,6 +53,7 @@ class Visitor
     public function __construct($hash)
     {
         $this->hash = $hash;
+        $this->surveys = new ArrayCollection();
     }
 
     /**
@@ -145,11 +147,18 @@ class Visitor
     }
 
     /**
-     * @return mixed
+     * @return Survey[]|ArrayCollection
      */
     public function getSurveys()
     {
         return $this->surveys;
+    }
+
+    /**
+     * @return Survey
+     */
+    public function getLastSurvey() {
+        return $this->surveys->last();
     }
 
     /**

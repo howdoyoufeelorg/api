@@ -9,12 +9,14 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserFixtures extends Fixture
 {
+    public const EDITOR_USER_REFERENCE = 'editor-user';
+
     private $passwordEncoder;
 
-     public function __construct(UserPasswordEncoderInterface $passwordEncoder)
-     {
-         $this->passwordEncoder = $passwordEncoder;
-     }
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->passwordEncoder = $passwordEncoder;
+    }
 
     public function load(ObjectManager $manager)
     {
@@ -25,6 +27,15 @@ class UserFixtures extends Fixture
         $user->setLastname('Test');
         $user->setRoles([User::ROLE_ADMIN]);
         $manager->persist($user);
+
+        $user = new User();
+        $user->setEmail('editor@howdoyoufeel.org');
+        $user->setPassword($this->passwordEncoder->encodePassword($user, 'TestHowDoYouFeel'));
+        $user->setFirstname('Editor');
+        $user->setLastname('Test');
+        $user->setRoles([User::ROLE_EDITOR]);
+        $manager->persist($user);
+        $this->addReference(self::EDITOR_USER_REFERENCE, $user);
 
         $manager->flush();
     }

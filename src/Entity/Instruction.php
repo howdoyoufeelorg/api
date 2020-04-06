@@ -13,7 +13,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\InstructionRepository")
  * @ORM\Table(name="instructions")
  * @ApiResource(
  *     normalizationContext={"groups"={"instructions_read"}},
@@ -24,10 +24,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 class Instruction
 {
     use TimestampableEntity;
-
-    const SEVERITY_LOW = 'low';
-    const SEVERITY_NORMAL = 'normal';
-    const SEVERITY_HIGH = 'high';
 
     /**
      * @ORM\Id
@@ -48,7 +44,11 @@ class Instruction
      */
     private $area;
     /**
-     * @ORM\Column(type="text", length=65535)
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $zipcode;
+    /**
+     * @ORM\Column(type="string", length=255)
      */
     private $severity;
     /**
@@ -125,6 +125,24 @@ class Instruction
     /**
      * @return mixed
      */
+    public function getZipcode()
+    {
+        return $this->zipcode;
+    }
+
+    /**
+     * @param mixed $zipcode
+     * @return Instruction
+     */
+    public function setZipcode($zipcode)
+    {
+        $this->zipcode = $zipcode;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getSeverity()
     {
         return $this->severity;
@@ -159,7 +177,7 @@ class Instruction
     }
 
     /**
-     * @return mixed
+     * @return User
      */
     public function getCreatedBy()
     {

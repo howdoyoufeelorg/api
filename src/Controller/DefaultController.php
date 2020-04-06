@@ -7,10 +7,14 @@
 
 namespace App\Controller;
 
+use App\Entity\AbstractGeoEntity;
 use App\Entity\Answer;
+use App\Entity\Instruction;
 use App\Entity\Question;
+use App\Entity\Severity;
 use App\Entity\Survey;
 use App\Entity\Visitor;
+use App\Entity\ZipcodePartial;
 use Doctrine\ORM\EntityManagerInterface;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
@@ -75,15 +79,14 @@ class DefaultController extends AbstractController
     public function postSurvey(Request $request)
     {
         $response = new JsonResponse();
-        $data = json_decode($request->getContent(), true);
         // Process the survey data here
         // Check for hash
         // Check if there's the user with this hash
         // If not, create new user, store survey
         // If found, just store survey
-        $hash = $data['hash'];
-        $answers = $data['answers'];
-        $geolocation = $data['geolocation'];
+        $hash = $request->request->get('hash');
+        $answers = $request->request->get('answers');
+        $geolocation = $request->request->get('geolocation');
         $token = (new Parser())->parse((string) $hash);
         if($token->getClaim('iss') !== $this->tokenIssuer) {
             $response->setStatusCode(500);
@@ -161,11 +164,40 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/get-instructions", name="get_instructions", methods={"GET"})
+     * @Route("/get-instructions", name="get_instructions", methods={"POST"})
      */
-    public function getInstructions()
+    public function getInstructions(Request $request)
     {
-        return new JsonResponse();
+        $response = new JsonResponse();
+        $hash = $request->request->get('hash');
+        $token = (new Parser())->parse((string) $hash);
+        if($token->getClaim('iss') !== $this->tokenIssuer) {
+            $response->setStatusCode(500);
+        } else {
+            $data = [];
+            $visitorUid = $token->getClaim('uid');
+            $visitor = $this->entityManager->getRepository(Visitor::class)->findOneBy(['hash' => $visitorUid]);
+            if($visitor instanceof Visitor) {
+                $lastSurvey = $visitor->getLastSurvey();
+                $zipcode = $lastSurvey->getZipcode();
+                $geoEntities = $this->determineGeoEntities($zipcode);
+                $severity = $this->determineSeverity($lastSurvey->getSicknessIndex());
+                $instructions = $this->entityManager->getRepository(Instruction::class)->findInstructions($geoEntities, $severity);
+                $packedInstructions = [];
+                foreach($instructions as $instruction) {
+                       $packedInstructions[] = [
+                            'createdBy' => $instruction->getCreatedBy()->getFullname(),
+                            'createdAt' => $instruction->getCreatedAt()->format(DATE_ATOM),
+                            'updatedAt' => $instruction->getUpdatedAt()->format(DATE_ATOM),
+                            'contents' => $instruction->getContents(),
+                       ];
+                }
+                $data['instructions'] = $packedInstructions;
+                $data['resources'] = $this->determineResources($geoEntities);
+            }
+            $response->setData($data);
+        }
+        return $response;
     }
 
     private function calculateSicknessIndex(Question $question, string $answer)
@@ -182,5 +214,72 @@ class DefaultController extends AbstractController
             $score = $question->getQuestionWeight();
         }
         return $score;
+    }
+
+    private function determineSeverity($sicknessIndex)
+    {
+        // Fill range is 45 to 450, where 45 is not sick at all, and 450 is very sick
+        if($sicknessIndex < 100) {
+            return Severity::LOW;
+        }
+        if($sicknessIndex > 250) {
+            return Severity::HIGH;
+        }
+        return Severity::NORMAL;
+    }
+
+    private function determineGeoEntities($zipcode)
+    {
+        for($i=3; $i>0; $i--) {
+            $partial = substr($zipcode, 0, $i);
+            $zipcodePartials = $this->entityManager->getRepository(ZipcodePartial::class)->findBy(['partial' => $partial]);
+            if($zipcodePartials) {
+                /** @var ZipcodePartial $firstMatchingPartial */
+                $firstMatchingPartial = current($zipcodePartials);
+                return [
+                    'area' => $firstMatchingPartial->getArea(),
+                    'state' => $firstMatchingPartial->getArea()->getState(),
+                    'country' => $firstMatchingPartial->getArea()->getState()->getCountry(),
+                    'zipcode' => $zipcode
+                ];
+            }
+        }
+        return [];
+    }
+
+    private function determineResources($geoEntities)
+    {
+        $resources = [];
+        if(array_key_exists('country', $geoEntities)) {
+            /** @var AbstractGeoEntity $entity */
+            $entity = $geoEntities['country'];
+            $resources['country'] = [
+                'webResources' => $entity->getWebResources(),
+                'twitterResources' => $entity->getTwitterResources(),
+                'officialWebResources' => $entity->getOfficialWebResources(),
+                'phoneNumbers' => $entity->getPhoneNumbers(),
+            ];
+        }
+        if(array_key_exists('state', $geoEntities)) {
+            /** @var AbstractGeoEntity $entity */
+            $entity = $geoEntities['state'];
+            $resources['state'] = [
+                'webResources' => $entity->getWebResources(),
+                'twitterResources' => $entity->getTwitterResources(),
+                'officialWebResources' => $entity->getOfficialWebResources(),
+                'phoneNumbers' => $entity->getPhoneNumbers(),
+            ];
+        }
+        if(array_key_exists('area', $geoEntities)) {
+            /** @var AbstractGeoEntity $entity */
+            $entity = $geoEntities['area'];
+            $resources['area'] = [
+                'webResources' => $entity->getWebResources(),
+                'twitterResources' => $entity->getTwitterResources(),
+                'officialWebResources' => $entity->getOfficialWebResources(),
+                'phoneNumbers' => $entity->getPhoneNumbers(),
+            ];
+        }
+        return $resources;
     }
 }
