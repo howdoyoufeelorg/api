@@ -7,12 +7,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
-
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\MappedSuperclass
@@ -29,16 +28,18 @@ abstract class AbstractLabel
     private $id;
     /**
      * @ORM\Column(type="string")
-     * @Groups({"read", "write"})
+     * @Groups({"label_read", "labels_data_include", "label_write"})
      */
     private $language;
     /**
      * @ORM\Column(type="string")
-     * @Groups({"read", "write"})
+     * @Groups({"label_read", "labels_data_include", "label_write"})
      */
     private $label;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Question", inversedBy="labels")
+     * @Groups({"label_read"})
+     * @MaxDepth(2)
      */
     private $question;
 

@@ -16,8 +16,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ORM\Entity
  * @ORM\Table(name="question_labels")
  * @API\ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"label_read"}},
+ *     denormalizationContext={"groups"={"label_write"}}
  * )
  * @API\ApiFilter(SearchFilter::class, properties={"id": "exact", "question_id": "exact"})
  * @Gedmo\Loggable

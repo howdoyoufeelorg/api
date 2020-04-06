@@ -15,8 +15,8 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  * @ORM\Entity
  * @ORM\Table(name="visitors")
  * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"visitors_read"}},
+ *     denormalizationContext={"groups"={"visitors_write"}}
  * )
  */
 class Visitor

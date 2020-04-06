@@ -14,8 +14,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="users")
  * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"users_read"}},
+ *     denormalizationContext={"groups"={"users_write"}}
  * )
  */
 class User implements UserInterface
@@ -34,13 +34,13 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\Email()
-     * @Groups({"read", "write"})
+     * @Groups({"users_read", "users_write"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"read", "write"})
+     * @Groups({"users_read", "users_write"})
      */
     private $roles = [];
 
@@ -52,22 +52,32 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"users_read", "users_write"})
      */
     private $firstname;
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"users_read", "users_write"})
      */
     private $middlename;
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"users_read", "users_write"})
      */
     private $lastname;
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Area", mappedBy="users")
-     * @Groups({"read"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Country", inversedBy="users")
+     * @Groups({"users_read"})
+     */
+    private $countries;
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\State", inversedBy="users")
+     * @Groups({"users_read"})
+     */
+    private $states;
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Area", inversedBy="users")
+     * @Groups({"users_read"})
      */
     private $areas;
     /**
@@ -209,6 +219,44 @@ class User implements UserInterface
     public function setLastname($lastname)
     {
         $this->lastname = $lastname;
+        return $this;
+    }
+
+    /**
+     * @return Iterator
+     */
+    public function getCountries()
+    {
+        return $this->countries;
+    }
+
+    /**
+     * @param Country $country
+     * @return User
+     */
+    public function addCountry(Country $country)
+    {
+        $country->addUser($this);
+        $this->countries[] = $country;
+        return $this;
+    }
+
+    /**
+     * @return Iterator
+     */
+    public function getStates()
+    {
+        return $this->states;
+    }
+
+    /**
+     * @param State $state
+     * @return User
+     */
+    public function addState(State $state)
+    {
+        $state->addUser($this);
+        $this->states[] = $state;
         return $this;
     }
 

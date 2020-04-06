@@ -15,8 +15,8 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  * @ORM\Entity(repositoryClass="App\Repository\SurveyRepository")
  * @ORM\Table(name="surveys")
  * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"surveys_read"}},
+ *     denormalizationContext={"groups"={"surveys_write"}}
  * )
  */
 class Survey

@@ -8,6 +8,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -18,105 +19,70 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Entity
  * @ORM\Table(name="areas")
  * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"areas_read"}},
+ *     denormalizationContext={"groups"={"areas_write"}}
  * )
  */
-class Area
+class Area extends AbstractGeoEntity
 {
-    use TimestampableEntity;
-
-    const DEFINED_BY_ZIPCODE = 'zipcode';
 
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\State", inversedBy="areas")
      */
-    private $id;
+    private $state;
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "write"})
+     * @ORM\OneToMany(targetEntity="App\Entity\ZipcodePartial", mappedBy="area", cascade={"persist"}, orphanRemoval=true)
      */
-    private $country;
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "write"})
-     */
-    private $label;
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "write"})
-     */
-    private $definedBy;
+    private $zipcodePartials;
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Instruction", mappedBy="area")
      */
     private $instructions;
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="areas")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="areas")
      */
     private $users;
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function __construct(string $name)
     {
-        return $this->id;
+        parent::__construct($name);
+        $this->zipcodePartials = new ArrayCollection();
     }
 
     /**
-     * @return mixed
+     * @return State
      */
-    public function getCountry()
+    public function getState()
     {
-        return $this->country;
+        return $this->state;
     }
 
     /**
-     * @param mixed $country
+     * @param mixed $state
      * @return Area
      */
-    public function setCountry($country)
+    public function setState(State $state)
     {
-        $this->country = $country;
+        $this->state = $state;
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getLabel()
+    public function getZipcodePartials()
     {
-        return $this->label;
+        return $this->zipcodePartials;
     }
 
     /**
-     * @param mixed $label
+     * @param mixed $zipcodePartial
      * @return Area
      */
-    public function setLabel($label)
+    public function addZipcodePartial(ZipcodePartial $zipcodePartial)
     {
-        $this->label = $label;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDefinedBy()
-    {
-        return $this->definedBy;
-    }
-
-    /**
-     * @param mixed $definedBy
-     * @return Area
-     */
-    public function setDefinedBy($definedBy)
-    {
-        $this->definedBy = $definedBy;
+        $zipcodePartial->setArea($this);
+        $this->zipcodePartials->add($zipcodePartial);
         return $this;
     }
 

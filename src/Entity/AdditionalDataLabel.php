@@ -18,8 +18,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity
  * @ORM\Table(name="additional_data_labels")
  * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"label_read"}},
+ *     denormalizationContext={"groups"={"label_write"}}
  * )
  * @Gedmo\Loggable
  */

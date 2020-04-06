@@ -18,8 +18,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="App\Repository\QuestionRepository")
  * @ORM\Table(name="questions")
  * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"questions_read", "labels_data_include"}},
+ *     denormalizationContext={"groups"={"questions_write"}}
  * )
  * @Gedmo\Loggable
  */
@@ -39,52 +39,52 @@ class Question
     private $id;
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"questions_read", "questions_write"})
      */
     private $questionNo;
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"questions_read", "questions_write"})
      */
     private $questionWeight;
     /**
      * @ORM\Column(type="string")
-     * @Groups({"read", "write"})
+     * @Groups({"questions_read", "questions_write"})
      */
     private $type;
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\QuestionLabel", mappedBy="question")
-     * @Groups({"read", "write"})
+     * @Groups({"labels_data_include", "questions_write"})
      */
     private $labels;
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"questions_read", "questions_write"})
      */
     private $description;
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"read", "write"})
+     * @Groups({"questions_read", "questions_write"})
      */
     private $required = false;
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"questions_read", "questions_write"})
      */
     private $requiresAdditionalData;
     /**
      * @ORM\Column(type="string", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"questions_read", "questions_write"})
      */
     private $additionalDataType;
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\AdditionalDataLabel", mappedBy="question")
-     * @Groups({"read", "write"})
+     * @Groups({"labels_data_include", "questions_write"})
      */
     private $additionalDataLabels;
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"read", "write"})
+     * @Groups({"questions_read", "questions_write"})
      */
     private $disabled = false;
     /**
