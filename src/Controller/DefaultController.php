@@ -87,6 +87,7 @@ class DefaultController extends AbstractController
         $hash = $request->request->get('hash');
         $answers = $request->request->get('answers');
         $geolocation = $request->request->get('geolocation');
+        $language = $request->request->get('language');
         $token = (new Parser())->parse((string) $hash);
         if($token->getClaim('iss') !== $this->tokenIssuer) {
             $response->setStatusCode(500);
@@ -106,7 +107,7 @@ class DefaultController extends AbstractController
             // Process $answers
             $survey = new Survey();
             $this->entityManager->persist($survey);
-            $survey->setLanguage('en-US');
+            $survey->setLanguage($language);
             $survey->setCountry($country['value']);
             $survey->setZipcode($zipcode['value']);
             $sicknessIndex = 0;
@@ -223,7 +224,7 @@ class DefaultController extends AbstractController
         if($sicknessIndex < 100) {
             return Severity::LOW;
         }
-        if($sicknessIndex > 250) {
+        if($sicknessIndex > 200) {
             return Severity::HIGH;
         }
         return Severity::NORMAL;
