@@ -19,7 +19,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Entity
  * @ORM\Table(name="areas")
  * @ApiResource(
- *     normalizationContext={"groups"={"areas_read"}},
+ *     normalizationContext={"groups"={"areas_read", "geoentity_read"}},
  *     denormalizationContext={"groups"={"areas_write"}}
  * )
  */

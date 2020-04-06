@@ -8,6 +8,7 @@
 namespace App\Controller;
 
 use App\Entity\Area;
+use App\Entity\State;
 use App\Entity\User;
 use App\Messenger\EmailNotification;
 use Doctrine\ORM\EntityManagerInterface;
@@ -51,15 +52,28 @@ class UserController extends AbstractController
         $areaStringElements = explode("/",$areaString);
         $areaId = end($areaStringElements);
         $area = $this->entityManager->getRepository(Area::class)->find($areaId);
+        $stateString = $request->request->get('state');
+        $stateStringElements = explode("/",$stateString);
+        $stateId = end($stateStringElements);
+        $state = $this->entityManager->getRepository(State::class)->find($stateId);
+
         $emails = array_filter(explode("\n", $emailsString));
-        if($area instanceof Area) {
+        if($area instanceof Area || $state instanceof State) {
             // Send invites
             foreach ($emails as $email) {
                 $existingUser = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
                 if ($existingUser instanceof User) {
-                    $existingAreas = $existingUser->getAreas();
-                    if(!$existingAreas->contains($area)) {
-                        $existingUser->addArea($area);
+                    if($area instanceof Area) {
+                        $existingAreas = $existingUser->getAreas();
+                        if (!$existingAreas->contains($area)) {
+                            $existingUser->addArea($area);
+                        }
+                    }
+                    if($state instanceof State) {
+                        $existingStates = $existingUser->getStates();
+                        if($existingStates->contains($state)) {
+                            $existingUser->addState($state);
+                        }
                     }
                 } else {
                     $user = new User();
@@ -67,7 +81,8 @@ class UserController extends AbstractController
                     $user->setEmail($email);
                     $user->setPassword($this->passwordEncoder->encodePassword($user, $this->generatePassword()));
                     $user->setRoles([User::ROLE_EDITOR]);
-                    $user->addArea($area);
+                    if($area instanceof Area) $user->addArea($area);
+                    if($state instanceof State) $user->addState($state);
                     $user->setRegistrationHash($this->generateToken());
                     // SEND INVITATIONS
                     $invitationSubject = 'HowDoYouFeel.org - Please join our efforts';

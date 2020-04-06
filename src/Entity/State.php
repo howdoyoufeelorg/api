@@ -16,7 +16,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  * @ORM\Entity
  * @ORM\Table(name="states")
  * @ApiResource(
- *     normalizationContext={"groups"={"states_read"}},
+ *     normalizationContext={"groups"={"states_read", "geoentity_read"}},
  *     denormalizationContext={"groups"={"states_write"}}
  * )
  */
