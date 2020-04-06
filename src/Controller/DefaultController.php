@@ -194,6 +194,7 @@ class DefaultController extends AbstractController
                 }
                 $data['instructions'] = $packedInstructions;
                 $data['resources'] = $this->determineResources($geoEntities);
+                $data['surveyId'] = $lastSurvey->getId();
             }
             $response->setData($data);
         }
