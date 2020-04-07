@@ -186,12 +186,17 @@ class DefaultController extends AbstractController
                 $instructions = $this->entityManager->getRepository(Instruction::class)->findInstructions($geoEntities, $severity);
                 $packedInstructions = [];
                 foreach($instructions as $instruction) {
-                       $packedInstructions[] = [
-                            'createdBy' => $instruction->getCreatedBy()->getFullname(),
-                            'createdAt' => $instruction->getCreatedAt()->format(DATE_ATOM),
-                            'updatedAt' => $instruction->getUpdatedAt()->format(DATE_ATOM),
-                            'contents' => $instruction->getContents(),
-                       ];
+                   $contents = [];
+                   foreach($instruction->getContents() as $instructionContent)
+                   {
+                       $contents[$instructionContent->getLanguage()] = $instructionContent->getContent();
+                   }
+                   $packedInstructions[] = [
+                        'createdBy' => $instruction->getCreatedBy()->getFullname(),
+                        'createdAt' => $instruction->getCreatedAt()->format(DATE_ATOM),
+                        'updatedAt' => $instruction->getUpdatedAt()->format(DATE_ATOM),
+                        'contents' => $contents,
+                   ];
                 }
                 $data['instructions'] = $packedInstructions;
                 $data['resources'] = $this->determineResources($geoEntities);

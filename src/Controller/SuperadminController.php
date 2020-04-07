@@ -39,9 +39,9 @@ class SuperadminController extends AbstractController
         ]);
     }
     /**
-     * @Route("/superadmin/authorize-gmail", name="superadmin_authorize_gmail")
+     * @Route("/superadmin/authorize-api", name="superadmin_authorize_api")
      */
-    public function authorizeGmail(Request $request)
+    public function authorizeApi(Request $request)
     {
         $code = $request->query->get('code');
         $client = $this->getGoogleClient();
@@ -91,8 +91,8 @@ class SuperadminController extends AbstractController
         $client->setClientId($client_id);
         $client->setClientSecret($client_secret);
         $client->setAccessType('offline');
-        $client->setScopes([\Google_Service_Gmail::GMAIL_SEND]);
-        $client->setRedirectUri($this->generateUrl('superadmin_authorize_gmail', [], UrlGeneratorInterface::ABSOLUTE_URL));
+        $client->setScopes([\Google_Service_Gmail::GMAIL_SEND, \Google_Service_Translate::CLOUD_TRANSLATION]);
+        $client->setRedirectUri($this->generateUrl('superadmin_authorize_api', [], UrlGeneratorInterface::ABSOLUTE_URL));
         return $client;
     }
 }

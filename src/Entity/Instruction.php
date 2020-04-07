@@ -52,7 +52,7 @@ class Instruction
      */
     private $severity;
     /**
-     * @ORM\Column(type="text", length=65535)
+     * @ORM\OneToMany(targetEntity="App\Entity\InstructionContent", mappedBy="instruction", cascade={"persist"}, orphanRemoval=true)
      */
     private $contents;
     /**
@@ -159,7 +159,7 @@ class Instruction
     }
 
     /**
-     * @return mixed
+     * @return InstructionContent[]
      */
     public function getContents()
     {
@@ -167,12 +167,13 @@ class Instruction
     }
 
     /**
-     * @param mixed $contents
+     * @param InstructionContent $content
      * @return Instruction
      */
-    public function setContents($contents)
+    public function addContent(InstructionContent $content)
     {
-        $this->contents = $contents;
+        $content->setInstruction($this);
+        $this->contents[] = $content;
         return $this;
     }
 
