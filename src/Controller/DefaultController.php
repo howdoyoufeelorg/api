@@ -9,6 +9,7 @@ namespace App\Controller;
 
 use App\Entity\AbstractGeoEntity;
 use App\Entity\Answer;
+use App\Entity\FrontElement;
 use App\Entity\Instruction;
 use App\Entity\Question;
 use App\Entity\Severity;
@@ -128,6 +129,19 @@ class DefaultController extends AbstractController
             $this->entityManager->flush();
         }
         return $response;
+    }
+
+    /**
+     * @Route("/get-elements", name="get_elements", methods={"GET"})
+     */
+    public function getElements()
+    {
+        $elements = [];
+        $frontElements = $this->entityManager->getRepository(FrontElement::class)->findAll();
+        foreach($frontElements as $frontElement) {
+            $elements[$frontElement->getElementId()] = $frontElement->getContents()->toArray();
+        }
+        return new JsonResponse($elements);
     }
 
     /**
