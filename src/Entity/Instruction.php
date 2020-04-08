@@ -8,9 +8,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InstructionRepository")
@@ -33,32 +36,43 @@ class Instruction
     private $id;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Country", inversedBy="instructions")
+     * @Groups({"instructions_read", "instructions_write"})
      */
     private $country;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\State", inversedBy="instructions")
+     * @Groups({"instructions_read", "instructions_write"})
      */
     private $state;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Area", inversedBy="instructions")
+     * @Groups({"instructions_read", "instructions_write"})
      */
     private $area;
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"instructions_read", "instructions_write"})
      */
     private $zipcode;
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"instructions_read", "instructions_write"})
      */
     private $severity;
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\InstructionContent", mappedBy="instruction", cascade={"persist"}, orphanRemoval=true)
+     * @Groups({"instructions_read", "instructions_write"})
      */
     private $contents;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="instructions")
      */
     private $createdBy;
+
+    public function __construct()
+    {
+        $this->contents = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -159,11 +173,24 @@ class Instruction
     }
 
     /**
-     * @return InstructionContent[]
+     * @return InstructionContent[]|ArrayCollection
      */
     public function getContents()
     {
         return $this->contents;
+    }
+
+    /**
+     * @param array $contents
+     * @return Instruction
+     */
+    public function setContents(array $contents)
+    {
+        foreach($contents as $content) {
+            $content->setInstruction($this);
+        }
+        $this->contents = $contents;
+        return $this;
     }
 
     /**

@@ -17,8 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity
  * @ORM\Table(name="instruction_contents")
  * @ApiResource(
- *     normalizationContext={"groups"={"instructions_read"}},
- *     denormalizationContext={"groups"={"instructions_write"}}
+ *     normalizationContext={"groups"={"instruction_content_read"}},
+ *     denormalizationContext={"groups"={"instruction_content_write"}}
  * )
  * @Gedmo\Loggable
  */
@@ -34,20 +34,21 @@ class InstructionContent
     private $id;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Instruction", inversedBy="contents")
+     * @Groups({"instruction_content_read", "instruction_content_write", "instructions_write"})
      */
     private $instruction;
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"instructions_read", "instructions_write"})
+     * @Groups({"instruction_content_read", "instruction_content_write", "instructions_read", "instructions_write"})
      */
     private $language;
     /**
      * @ORM\Column(type="text", length=65535)
-     * @Groups({"instructions_read", "instructions_write"})
+     * @Groups({"instruction_content_read", "instruction_content_write", "instructions_read", "instructions_write"})
      */
     private $content;
 
-    public function __construct(string $language, string $content)
+    public function __construct(string $language = '', string $content = '')
     {
         $this->language = $language;
         $this->content = $content;

@@ -20,7 +20,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Table(name="areas")
  * @ApiResource(
  *     normalizationContext={"groups"={"areas_read", "geoentity_read"}},
- *     denormalizationContext={"groups"={"areas_write"}}
+ *     denormalizationContext={"groups"={"areas_write", "geoentity_write"}}
  * )
  */
 class Area extends AbstractGeoEntity
@@ -28,10 +28,12 @@ class Area extends AbstractGeoEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\State", inversedBy="areas")
+     * @Groups({"areas_read"})
      */
     private $state;
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\ZipcodePartial", mappedBy="area", cascade={"persist"}, orphanRemoval=true)
+     * @Groups({"areas_read"})
      */
     private $zipcodePartials;
     /**
@@ -43,7 +45,7 @@ class Area extends AbstractGeoEntity
      */
     private $users;
 
-    public function __construct(string $name)
+    public function __construct(string $name = '')
     {
         parent::__construct($name);
         $this->zipcodePartials = new ArrayCollection();

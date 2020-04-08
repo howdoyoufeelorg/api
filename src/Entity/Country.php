@@ -10,20 +10,22 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="countries")
  * @ApiResource(
  *     normalizationContext={"groups"={"countries_read", "geoentity_read"}},
- *     denormalizationContext={"groups"={"countries_write"}}
+ *     denormalizationContext={"groups"={"countries_write", "geoentity_write"}}
  * )
  */
 class Country extends AbstractGeoEntity
 {
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\State", mappedBy="country", cascade={"persist"}, orphanRemoval=true)
+     * @Groups({"countries_read"})
      */
     private $states;
     /**
@@ -35,7 +37,7 @@ class Country extends AbstractGeoEntity
      */
     private $users;
 
-    public function __construct(string $name)
+    public function __construct(string $name = '')
     {
         parent::__construct($name);
         $this->states = new ArrayCollection();

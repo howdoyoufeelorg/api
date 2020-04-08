@@ -56,7 +56,7 @@ abstract class AbstractGeoEntity
      * AbstractGeoEntity constructor.
      * @param $name
      */
-    public function __construct($name)
+    public function __construct(string $name = '')
     {
         $this->name = $name;
     }
@@ -106,6 +106,16 @@ abstract class AbstractGeoEntity
     }
 
     /**
+     * @param array $webResources
+     * @return AbstractGeoEntity
+     */
+    public function setWebResources(array $webResources): AbstractGeoEntity
+    {
+        $this->webResources = $webResources;
+        return $this;
+    }
+
+    /**
      * @param string $webResource
      * @return AbstractGeoEntity
      */
@@ -121,6 +131,16 @@ abstract class AbstractGeoEntity
     public function getTwitterResources(): array
     {
         return $this->twitterResources;
+    }
+
+    /**
+     * @param array $twitterResources
+     * @return AbstractGeoEntity
+     */
+    public function setTwitterResources(array $twitterResources): AbstractGeoEntity
+    {
+        $this->twitterResources = $twitterResources;
+        return $this;
     }
 
     /**
@@ -142,6 +162,16 @@ abstract class AbstractGeoEntity
     }
 
     /**
+     * @param array $officialWebResources
+     * @return AbstractGeoEntity
+     */
+    public function setOfficialWebResources(array $officialWebResources): AbstractGeoEntity
+    {
+        $this->officialWebResources = $officialWebResources;
+        return $this;
+    }
+
+    /**
      * @param string $officialWebResource
      * @return AbstractGeoEntity
      */
@@ -157,6 +187,16 @@ abstract class AbstractGeoEntity
     public function getPhoneNumbers(): array
     {
         return $this->phoneNumbers;
+    }
+
+    /**
+     * @param array $phoneNumbers
+     * @return AbstractGeoEntity
+     */
+    public function setPhoneNumbers(array $phoneNumbers): AbstractGeoEntity
+    {
+        $this->phoneNumbers = $phoneNumbers;
+        return $this;
     }
 
     /**
