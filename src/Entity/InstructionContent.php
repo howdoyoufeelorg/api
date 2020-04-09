@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ORM\Entity
@@ -35,11 +37,13 @@ class InstructionContent
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Instruction", inversedBy="contents")
      * @Groups({"instruction_content_read", "instruction_content_write", "instructions_write"})
+     * @ApiFilter(SearchFilter::class, strategy="exact")
      */
     private $instruction;
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"instruction_content_read", "instruction_content_write", "instructions_read", "instructions_write"})
+     * @ApiFilter(SearchFilter::class, strategy="exact")
      */
     private $language;
     /**

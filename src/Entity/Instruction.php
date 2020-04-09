@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 
 /**
@@ -22,6 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups"={"instructions_read"}},
  *     denormalizationContext={"groups"={"instructions_write"}}
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "country", "state", "area", "zipcode"}, arguments={"orderParameterName"="order"})
  * @Gedmo\Loggable
  */
 class Instruction
