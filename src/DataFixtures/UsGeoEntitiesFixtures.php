@@ -107,7 +107,7 @@ class UsGeoEntitiesFixtures extends Fixture
             $state = new State($stateName);
             $twitterResource = $this->getTwitterResource($stateAbbr);
             if($twitterResource) {
-                $state->addTwitterResource($twitterResource);
+                $state->addTwitterResource(['description' => "$stateName official Twitter", 'value' => $twitterResource]);
             }
             $country->addState($state);
 

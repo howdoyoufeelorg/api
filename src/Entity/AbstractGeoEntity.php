@@ -116,10 +116,10 @@ abstract class AbstractGeoEntity
     }
 
     /**
-     * @param string $webResource
+     * @param array $webResource
      * @return AbstractGeoEntity
      */
-    public function addWebResource(string $webResource): AbstractGeoEntity
+    public function addWebResource(array $webResource): AbstractGeoEntity
     {
         $this->webResources[] = $webResource;
         return $this;
@@ -144,10 +144,10 @@ abstract class AbstractGeoEntity
     }
 
     /**
-     * @param string $twitterResource
+     * @param array $twitterResource
      * @return AbstractGeoEntity
      */
-    public function addTwitterResource(string $twitterResource): AbstractGeoEntity
+    public function addTwitterResource(array $twitterResource): AbstractGeoEntity
     {
         $this->twitterResources[] = $twitterResource;
         return $this;
@@ -172,10 +172,10 @@ abstract class AbstractGeoEntity
     }
 
     /**
-     * @param string $officialWebResource
+     * @param array $officialWebResource
      * @return AbstractGeoEntity
      */
-    public function addOfficialWebResource(string $officialWebResource): AbstractGeoEntity
+    public function addOfficialWebResource(array $officialWebResource): AbstractGeoEntity
     {
         $this->officialWebResources[] = $officialWebResource;
         return $this;
@@ -200,10 +200,10 @@ abstract class AbstractGeoEntity
     }
 
     /**
-     * @param string $phoneNumber
+     * @param array $phoneNumber
      * @return AbstractGeoEntity
      */
-    public function addPhoneNumber(string $phoneNumber): AbstractGeoEntity
+    public function addPhoneNumber(array $phoneNumber): AbstractGeoEntity
     {
         $this->phoneNumbers[] = $phoneNumber;
         return $this;
