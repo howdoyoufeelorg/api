@@ -15,6 +15,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 
 /**
@@ -22,7 +23,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * @ORM\Table(name="instructions")
  * @ApiResource(
  *     normalizationContext={"groups"={"instructions_read"}},
- *     denormalizationContext={"groups"={"instructions_write"}}
+ *     denormalizationContext={"groups"={"instructions_write"}, "enable_max_depth"=true}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "country", "state", "area", "zipcode"}, arguments={"orderParameterName"="order"})
  * @Gedmo\Loggable
@@ -63,8 +64,9 @@ class Instruction
      */
     private $severity;
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\InstructionContent", mappedBy="instruction", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\InstructionContent", mappedBy="instruction", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Groups({"instructions_read", "instructions_write"})
+     * @MaxDepth(3)
      */
     private $contents;
     /**
@@ -184,26 +186,27 @@ class Instruction
     }
 
     /**
-     * @param array $contents
-     * @return Instruction
-     */
-    public function setContents(array $contents)
-    {
-        foreach($contents as $content) {
-            $content->setInstruction($this);
-        }
-        $this->contents = $contents;
-        return $this;
-    }
-
-    /**
      * @param InstructionContent $content
      * @return Instruction
      */
     public function addContent(InstructionContent $content)
     {
-        $content->setInstruction($this);
-        $this->contents[] = $content;
+        if(! $this->contents->contains($content)) {
+            $content->setInstruction($this);
+            $this->contents[] = $content;
+        }
+        return $this;
+    }
+
+    public function removeContent(InstructionContent $content): self
+    {
+        if ($this->contents->contains($content)) {
+            $this->contents->removeElement($content);
+            // set the owning side to null (unless already changed)
+            if ($content->getInstruction() === $this) {
+                $content->setInstruction(null);
+            }
+        }
         return $this;
     }
 

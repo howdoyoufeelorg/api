@@ -78,7 +78,7 @@ class InstructionContent
      * @param Instruction $instruction
      * @return InstructionContent
      */
-    public function setInstruction(Instruction $instruction)
+    public function setInstruction(?Instruction $instruction)
     {
         $this->instruction = $instruction;
         return $this;
