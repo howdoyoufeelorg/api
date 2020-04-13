@@ -10,13 +10,12 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-
+use App\Annotation\UserAware;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InstructionRepository")
@@ -25,8 +24,9 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *     normalizationContext={"groups"={"instructions_read"}},
  *     denormalizationContext={"groups"={"instructions_write"}, "enable_max_depth"=true}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "country", "state", "area", "zipcode"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "country", "state", "area", "zipcode", "createdAt", "updatedAt"}, arguments={"orderParameterName"="order"})
  * @Gedmo\Loggable
+ * @UserAware(userFieldName="created_by_id")
  */
 class Instruction
 {

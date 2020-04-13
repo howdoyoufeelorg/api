@@ -10,22 +10,22 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Gedmo\Mapping\Annotation as Gedmo;
-
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="areas")
  * @ApiResource(
+ *     attributes={"pagination_enabled"=false},
  *     normalizationContext={"groups"={"areas_read", "geoentity_read"}},
  *     denormalizationContext={"groups"={"areas_write", "geoentity_write"}}
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "name"})
  */
 class Area extends AbstractGeoEntity
 {
-
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\State", inversedBy="areas")
      * @Groups({"areas_read"})
@@ -49,6 +49,7 @@ class Area extends AbstractGeoEntity
     {
         parent::__construct($name);
         $this->zipcodePartials = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     /**
@@ -107,7 +108,7 @@ class Area extends AbstractGeoEntity
     }
 
     /**
-     * @return mixed
+     * @return ArrayCollection|User[]
      */
     public function getUsers()
     {
@@ -121,6 +122,14 @@ class Area extends AbstractGeoEntity
     public function addUser(User $user)
     {
         $this->users[] = $user;
+        return $this;
+    }
+
+    public function removeUser(User $user)
+    {
+        if($this->users->contains($user)) {
+            $this->users->removeElement($user);
+        }
         return $this;
     }
 }

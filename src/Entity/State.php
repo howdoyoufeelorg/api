@@ -11,14 +11,18 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="states")
  * @ApiResource(
+ *     attributes={"pagination_enabled"=false},
  *     normalizationContext={"groups"={"states_read", "geoentity_read"}},
  *     denormalizationContext={"groups"={"states_write", "geoentity_write"}}
  * )
+ * @ApiFilter(OrderFilter::class, properties={"id", "name"})
  */
 class State extends AbstractGeoEntity
 {
@@ -47,6 +51,7 @@ class State extends AbstractGeoEntity
     {
         parent::__construct($name);
         $this->areas = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     /**
@@ -106,7 +111,7 @@ class State extends AbstractGeoEntity
     }
 
     /**
-     * @return User[]
+     * @return User[]|ArrayCollection
      */
     public function getUsers()
     {
@@ -120,6 +125,18 @@ class State extends AbstractGeoEntity
     public function addUser(User $user)
     {
         $this->users[] = $user;
+        return $this;
+    }
+
+    /**
+     * @param User $user
+     * @return State
+     */
+    public function removeUser(User $user)
+    {
+        if($this->users->contains($user)) {
+            $this->users->removeElement($user);
+        }
         return $this;
     }
 }

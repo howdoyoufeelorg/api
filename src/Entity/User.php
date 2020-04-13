@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Iterator;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -67,17 +67,17 @@ class User implements UserInterface
     private $lastname;
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Country", inversedBy="users")
-     * @Groups({"users_read"})
+     * @Groups({"users_read", "users_write"})
      */
     private $countries;
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\State", inversedBy="users")
-     * @Groups({"users_read"})
+     * @Groups({"users_read", "users_write"})
      */
     private $states;
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Area", inversedBy="users")
-     * @Groups({"users_read"})
+     * @Groups({"users_read", "users_write"})
      */
     private $areas;
     /**
@@ -93,6 +93,12 @@ class User implements UserInterface
      */
     private $confirmed = false;
 
+    public function __construct()
+    {
+        $this->countries = new ArrayCollection();
+        $this->states = new ArrayCollection();
+        $this->areas = new ArrayCollection();
+    }
 
     public function getFullname()
     {
@@ -230,7 +236,7 @@ class User implements UserInterface
     }
 
     /**
-     * @return Iterator
+     * @return Country[]|ArrayCollection
      */
     public function getCountries()
     {
@@ -248,8 +254,19 @@ class User implements UserInterface
         return $this;
     }
 
+    public function removeCountry(Country $country)
+    {
+        if ($this->countries->contains($country)) {
+            $this->countries->removeElement($country);
+            if($country->getUsers()->contains($this)) {
+                $country->removeUser($this);
+            }
+        }
+        return $this;
+    }
+
     /**
-     * @return Iterator
+     * @return State[]|ArrayCollection
      */
     public function getStates()
     {
@@ -267,8 +284,19 @@ class User implements UserInterface
         return $this;
     }
 
+    public function removeState(State $state)
+    {
+        if ($this->states->contains($state)) {
+            $this->states->removeElement($state);
+            if($state->getUsers()->contains($this)) {
+                $state->removeUser($this);
+            }
+        }
+        return $this;
+    }
+
     /**
-     * @return Iterator
+     * @return ArrayCollection
      */
     public function getAreas()
     {
@@ -283,6 +311,21 @@ class User implements UserInterface
     {
         $area->addUser($this);
         $this->areas[] = $area;
+        return $this;
+    }
+
+    /**
+     * @param Area $area
+     * @return User
+     */
+    public function removeArea(Area $area)
+    {
+        if ($this->areas->contains($area)) {
+            $this->areas->removeElement($area);
+            if($area->getUsers()->contains($this)) {
+                $area->removeUser($this);
+            }
+        }
         return $this;
     }
 
