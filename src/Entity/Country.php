@@ -13,8 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-
-
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ORM\Entity
@@ -25,6 +24,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  *     denormalizationContext={"groups"={"countries_write", "geoentity_write"}}
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"})
+ * @ApiFilter(SearchFilter::class, properties={"id": "exact"})
  */
 class Country extends AbstractGeoEntity
 {
