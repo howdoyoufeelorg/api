@@ -8,9 +8,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 
 /**
@@ -18,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Table(name="questions")
  * @ApiResource(
  *     normalizationContext={"groups"={"questions_read", "labels_data_include"}},
- *     denormalizationContext={"groups"={"questions_write"}}
+ *     denormalizationContext={"groups"={"questions_write"}, "enable_max_depth"=true}
  * )
  * @Gedmo\Loggable
  */
@@ -52,8 +54,9 @@ class Question
      */
     private $type;
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\QuestionLabel", mappedBy="question")
+     * @ORM\OneToMany(targetEntity="App\Entity\QuestionLabel", mappedBy="question", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Groups({"labels_data_include", "questions_write"})
+     * @MaxDepth(3)
      */
     private $labels;
     /**
@@ -77,8 +80,9 @@ class Question
      */
     private $additionalDataType;
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\AdditionalDataLabel", mappedBy="question")
+     * @ORM\OneToMany(targetEntity="App\Entity\AdditionalDataLabel", mappedBy="question", cascade={"persist", "remove"}, orphanRemoval=true)
      * @Groups({"labels_data_include", "questions_write"})
+     * @MaxDepth(3)
      */
     private $additionalDataLabels;
     /**
@@ -90,6 +94,13 @@ class Question
      * @ORM\OneToMany(targetEntity="App\Entity\Answer", mappedBy="question")
      */
     private $answers;
+
+    public function __construct()
+    {
+        $this->labels = new ArrayCollection();
+        $this->additionalDataLabels = new ArrayCollection();
+        $this->answers = new ArrayCollection();
+    }
 
     public function toArray()
     {
@@ -162,7 +173,7 @@ class Question
     }
 
     /**
-     * @return QuestionLabel[]
+     * @return QuestionLabel[]|ArrayCollection
      */
     public function getLabels()
     {
@@ -175,8 +186,25 @@ class Question
      */
     public function addLabel(QuestionLabel $label)
     {
-        $label->setQuestion($this);
-        $this->labels[] = $label;
+        if(!$this->labels->contains($label)) {
+            $label->setQuestion($this);
+            $this->labels[] = $label;
+        }
+        return $this;
+    }
+
+    /**
+     * @param QuestionLabel $label
+     * @return Question
+     */
+    public function removeLabel(QuestionLabel $label)
+    {
+        if($this->labels->contains($label)) {
+            $this->labels->removeElement($label);
+            if ($label->getQuestion() === $this) {
+                $label->setQuestion(null);
+            }
+        }
         return $this;
     }
 
@@ -253,7 +281,7 @@ class Question
     }
 
     /**
-     * @return mixed
+     * @return AdditionalDataLabel[] | ArrayCollection
      */
     public function getAdditionalDataLabels()
     {
@@ -266,8 +294,25 @@ class Question
      */
     public function addAdditionalDataLabel(AdditionalDataLabel $additionalDataLabel)
     {
-        $additionalDataLabel->setQuestion($this);
-        $this->additionalDataLabels[] = $additionalDataLabel;
+        if(! $this->additionalDataLabels->contains($additionalDataLabel)) {
+            $additionalDataLabel->setQuestion($this);
+            $this->additionalDataLabels[] = $additionalDataLabel;
+        }
+        return $this;
+    }
+
+    /**
+     * @param AdditionalDataLabel $additionalDataLabel
+     * @return Question
+     */
+    public function removeAdditionalDataLabel(AdditionalDataLabel $additionalDataLabel)
+    {
+        if($this->additionalDataLabels->contains($additionalDataLabel)) {
+            $this->additionalDataLabels->remove($additionalDataLabel);
+            if($additionalDataLabel->getQuestion() === $this) {
+                $additionalDataLabel->setQuestion(null);
+            }
+        }
         return $this;
     }
 

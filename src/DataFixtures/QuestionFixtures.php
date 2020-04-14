@@ -231,7 +231,9 @@ class QuestionFixtures extends Fixture
             $manager->persist($question);
             $question->setQuestionWeight($q['weight']);
             $question->setType($q['type']);
+            $question->setDescription($q['labels'][0]['label']);
             foreach($q['labels'] as $l) {
+                if($l['language'] == 'rs') continue; // Remove Serbian labels from test DB - just makes things confusing
                 $label = new QuestionLabel();
                 $manager->persist($label);
                 $label->setLanguage($l['language']);

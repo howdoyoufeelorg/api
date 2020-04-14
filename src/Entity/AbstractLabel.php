@@ -9,7 +9,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\MappedSuperclass
@@ -26,18 +25,17 @@ abstract class AbstractLabel
     private $id;
     /**
      * @ORM\Column(type="string")
-     * @Groups({"label_read", "labels_data_include", "label_write"})
+     * @Groups({"label_read", "labels_data_include", "label_write", "questions_write"})
      */
     private $language;
     /**
      * @ORM\Column(type="string")
-     * @Groups({"label_read", "labels_data_include", "label_write"})
+     * @Groups({"label_read", "labels_data_include", "label_write", "questions_write"})
      */
     private $label;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Question", inversedBy="labels")
-     * @Groups({"label_read"})
-     * @MaxDepth(2)
+     * @Groups({"label_read", "questions_write"})
      */
     private $question;
 
@@ -97,7 +95,7 @@ abstract class AbstractLabel
      * @param Question $question
      * @return $this
      */
-    public function setQuestion(Question $question)
+    public function setQuestion(?Question $question)
     {
         $this->question = $question;
         return $this;

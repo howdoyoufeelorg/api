@@ -19,8 +19,6 @@ class InstructionFixtures extends Fixture implements DependentFixtureInterface
     private $languages = [
         'en',
         'es',
-       /* 'fr',
-        'de'*/
     ];
 
     private $zipcodeInstructions = [
