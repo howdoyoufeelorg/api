@@ -11,6 +11,6 @@ namespace App\Entity;
 class Severity
 {
     const LOW = 'low';
-    const NORMAL = 'normal';
+    const MEDIUM = 'medium';
     const HIGH = 'high';
 }

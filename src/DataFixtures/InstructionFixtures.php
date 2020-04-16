@@ -22,14 +22,14 @@ class InstructionFixtures extends Fixture implements DependentFixtureInterface
     ];
 
     private $zipcodeInstructions = [
-        ['Zipcode Instruction 1 NORMAL', Severity::NORMAL, '78620'],
-        ['Zipcode Instruction 2 NORMAL', Severity::NORMAL, '78620'],
+        ['Zipcode Instruction 1 MEDIUM', Severity::MEDIUM, '78620'],
+        ['Zipcode Instruction 2 MEDIUM', Severity::MEDIUM, '78620'],
         ['Zipcode Instruction 1 HIGH',   Severity::HIGH,   '78620'],
         ['Zipcode Instruction 2 HIGH',   Severity::HIGH,   '78620'],
         ['Zipcode Instruction 1 LOW',    Severity::LOW,    '78620'],
         ['Zipcode Instruction 2 LOW',    Severity::LOW,    '78620'],
-        ['Zipcode Instruction 1 NORMAL', Severity::NORMAL, '48864'],
-        ['Zipcode Instruction 2 NORMAL', Severity::NORMAL, '48864'],
+        ['Zipcode Instruction 1 MEDIUM', Severity::MEDIUM, '48864'],
+        ['Zipcode Instruction 2 MEDIUM', Severity::MEDIUM, '48864'],
         ['Zipcode Instruction 1 HIGH',   Severity::HIGH,   '48864'],
         ['Zipcode Instruction 2 HIGH',   Severity::HIGH,   '48864'],
         ['Zipcode Instruction 1 LOW',    Severity::LOW,    '48864'],
@@ -37,14 +37,14 @@ class InstructionFixtures extends Fixture implements DependentFixtureInterface
     ];
 
     private $areaInstructions = [
-        ['Area Instruction 1 NORMAL', Severity::NORMAL, 'Texas 78'],
-        ['Area Instruction 2 NORMAL', Severity::NORMAL, 'Texas 78'],
+        ['Area Instruction 1 MEDIUM', Severity::MEDIUM, 'Texas 78'],
+        ['Area Instruction 2 MEDIUM', Severity::MEDIUM, 'Texas 78'],
         ['Area Instruction 1 HIGH',   Severity::HIGH,   'Texas 78'],
         ['Area Instruction 2 HIGH',   Severity::HIGH,   'Texas 78'],
         ['Area Instruction 1 LOW',    Severity::LOW,    'Texas 78'],
         ['Area Instruction 2 LOW',    Severity::LOW,    'Texas 78'],
-        ['Area Instruction 1 NORMAL', Severity::NORMAL, 'Michigan 48'],
-        ['Area Instruction 2 NORMAL', Severity::NORMAL, 'Michigan 48'],
+        ['Area Instruction 1 MEDIUM', Severity::MEDIUM, 'Michigan 48'],
+        ['Area Instruction 2 MEDIUM', Severity::MEDIUM, 'Michigan 48'],
         ['Area Instruction 1 HIGH',   Severity::HIGH,   'Michigan 48'],
         ['Area Instruction 2 HIGH',   Severity::HIGH,   'Michigan 48'],
         ['Area Instruction 1 LOW',    Severity::LOW,    'Michigan 48'],
@@ -52,14 +52,14 @@ class InstructionFixtures extends Fixture implements DependentFixtureInterface
     ];
 
     private $stateInstructions = [
-        ['State Instruction 1 NORMAL', Severity::NORMAL, 'Texas'],
-        ['State Instruction 2 NORMAL', Severity::NORMAL, 'Texas'],
+        ['State Instruction 1 MEDIUM', Severity::MEDIUM, 'Texas'],
+        ['State Instruction 2 MEDIUM', Severity::MEDIUM, 'Texas'],
         ['State Instruction 1 HIGH',   Severity::HIGH,   'Texas'],
         ['State Instruction 2 HIGH',   Severity::HIGH,   'Texas'],
         ['State Instruction 1 LOW',    Severity::LOW,    'Texas'],
         ['State Instruction 2 LOW',    Severity::LOW,    'Texas'],
-        ['State Instruction 1 NORMAL', Severity::NORMAL, 'Michigan'],
-        ['State Instruction 2 NORMAL', Severity::NORMAL, 'Michigan'],
+        ['State Instruction 1 MEDIUM', Severity::MEDIUM, 'Michigan'],
+        ['State Instruction 2 MEDIUM', Severity::MEDIUM, 'Michigan'],
         ['State Instruction 1 HIGH',   Severity::HIGH,   'Michigan'],
         ['State Instruction 2 HIGH',   Severity::HIGH,   'Michigan'],
         ['State Instruction 1 LOW',    Severity::LOW,    'Michigan'],

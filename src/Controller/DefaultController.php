@@ -246,7 +246,7 @@ class DefaultController extends AbstractController
         if($sicknessIndex > 200) {
             return Severity::HIGH;
         }
-        return Severity::NORMAL;
+        return Severity::MEDIUM;
     }
 
     private function determineGeoEntities($zipcode)
