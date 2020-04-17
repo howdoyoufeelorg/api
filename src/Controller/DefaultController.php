@@ -23,7 +23,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route as Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
@@ -302,5 +302,36 @@ class DefaultController extends AbstractController
             ];
         }
         return $resources;
+    }
+
+    /**
+     * @Route("/do-translate")
+     */
+    public function doTranslate(Request $request)
+    {
+        $language = $request->request->get('language');
+        $text = $request->request->get('content');
+
+        $token = '1//09RHb6wjKoireCgYIARAAGAkSNwF-L9IrBEXWSR-6BpSNBpMXMvC8yhCy1NV9wxCEJVxdZIUCUBFGyktpFTInNugEJw1aKjbdDhk';
+        $client_id = $this->getParameter('google_client_id');
+        $client_secret = $this->getParameter('google_client_secret');
+        $client = new \Google_Client();
+        $client->setClientId($client_id);
+        $client->setClientSecret($client_secret);
+        $client->refreshToken($token);
+        $translate = new \Google_Service_Translate($client);
+        $request = new \Google_Service_Translate_TranslateTextRequest();
+        $request->setTargetLanguageCode($language);
+        $request->setContents($text);
+        $result = $translate->projects->translateText('projects/m-app-3', $request);
+        $translations = $result->getTranslations();
+        $firstTranslation = $translations[0];
+        /** @var \Google_Service_Translate_Translation $firstTranslation */
+        $translatedText = $firstTranslation->getTranslatedText();
+
+        return new JsonResponse([
+            'language' => $language,
+            'translation' => $translatedText
+        ]);
     }
 }
