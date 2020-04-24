@@ -8,6 +8,7 @@
 namespace App\EventListener;
 
 use App\Helper\Security;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,15 +32,18 @@ final class UserFilterConfigurator
         $this->security = $security;
     }
 
-    public function onKernelRequest(): void
+    public function onKernelRequest(RequestEvent $event): void
     {
-        if (!$user = $this->getUser()) {
-            throw new \RuntimeException('There is no authenticated user.');
-        }
-        if(!$this->security->isAdmin()) {
-            $filter = $this->em->getFilters()->enable('user_filter');
-            $filter->setParameter('id', $user->getId());
-            $filter->setAnnotationReader($this->reader);
+        $path = $event->getRequest()->getPathInfo();
+        if(preg_match('/api/', $path)) {
+            if (!$user = $this->getUser()) {
+                throw new \RuntimeException('There is no authenticated user.');
+            }
+            if (!$this->security->isAdmin()) {
+                $filter = $this->em->getFilters()->enable('user_filter');
+                $filter->setParameter('id', $user->getId());
+                $filter->setAnnotationReader($this->reader);
+            }
         }
     }
 
