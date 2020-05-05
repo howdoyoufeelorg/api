@@ -95,6 +95,9 @@ class DefaultController extends AbstractController
         } else {
             $country = $answers['country']; unset($answers['country']);
             $zipcode = $answers['zipcode']; unset($answers['zipcode']);
+            $age = $answers['age']['value'] ?? 0 ; unset($answers['age']);
+            $gender = $answers['gender']['value'] ?? ''; unset($answers['gender']);
+            $race = $answers['race']['value'] ?? ''; unset($answers['race']);
             //$language = $answers['language']; unset($answers['language']);
             $visitorUid = $token->getClaim('uid');
             $visitor = $this->entityManager->getRepository(Visitor::class)->findOneBy(['hash' => $visitorUid]);
@@ -105,6 +108,9 @@ class DefaultController extends AbstractController
             $visitor->setIp($request->getClientIp());
             $visitor->setLatitude($geolocation['latitude'] ? $geolocation['latitude'] : 0);
             $visitor->setLongitude($geolocation['longitude'] ? $geolocation['longitude'] : 0);
+            $visitor->setAge($age);
+            $visitor->setGender($gender);
+            $visitor->setRace($race);
             // Process $answers
             $survey = new Survey();
             $this->entityManager->persist($survey);

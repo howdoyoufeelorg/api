@@ -48,6 +48,18 @@ class Visitor
      * @ORM\OneToMany(targetEntity="App\Entity\Survey", mappedBy="visitor")
      */
     private $surveys;
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $age;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $gender;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $race;
 
     public function __construct($hash)
     {
@@ -168,6 +180,60 @@ class Visitor
     {
         $survey->setVisitor($this);
         $this->surveys[] = $survey;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAge()
+    {
+        return $this->age;
+    }
+
+    /**
+     * @param mixed $age
+     * @return Visitor
+     */
+    public function setAge($age)
+    {
+        $this->age = $age;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param mixed $gender
+     * @return Visitor
+     */
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRace()
+    {
+        return $this->race;
+    }
+
+    /**
+     * @param mixed $race
+     * @return Visitor
+     */
+    public function setRace($race)
+    {
+        $this->race = $race;
         return $this;
     }
 }
