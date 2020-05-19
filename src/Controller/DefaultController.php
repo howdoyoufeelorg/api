@@ -17,6 +17,7 @@ use App\Entity\Survey;
 use App\Entity\Visitor;
 use App\Entity\ZipcodePartial;
 use Doctrine\ORM\EntityManagerInterface;
+use Google\Cloud\Translate\V3\TranslationServiceClient;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Psr\Log\LoggerInterface;
@@ -318,21 +319,15 @@ class DefaultController extends AbstractController
         $language = $request->request->get('language');
         $text = $request->request->get('content');
 
-        $token = '1//09RHb6wjKoireCgYIARAAGAkSNwF-L9IrBEXWSR-6BpSNBpMXMvC8yhCy1NV9wxCEJVxdZIUCUBFGyktpFTInNugEJw1aKjbdDhk';
-        $client_id = $this->getParameter('google_client_id');
-        $client_secret = $this->getParameter('google_client_secret');
-        $client = new \Google_Client();
-        $client->setClientId($client_id);
-        $client->setClientSecret($client_secret);
-        $client->refreshToken($token);
-        $translate = new \Google_Service_Translate($client);
-        $request = new \Google_Service_Translate_TranslateTextRequest();
-        $request->setTargetLanguageCode($language);
-        $request->setContents($text);
-        $result = $translate->projects->translateText('projects/m-app-3', $request);
-        $translations = $result->getTranslations();
-        $firstTranslation = $translations[0];
-        /** @var \Google_Service_Translate_Translation $firstTranslation */
+        $translationClient = new TranslationServiceClient();
+        $content = [$text];
+        $response = $translationClient->translateText(
+            $content,
+            $language,
+            TranslationServiceClient::locationName('m-app-3', 'global')
+        );
+        $translations = $response->getTranslations();
+        $firstTranslation = $translations->offsetGet(0);
         $translatedText = $firstTranslation->getTranslatedText();
 
         return new JsonResponse([
