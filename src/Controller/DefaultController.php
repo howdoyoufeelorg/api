@@ -16,6 +16,7 @@ use App\Entity\Severity;
 use App\Entity\Survey;
 use App\Entity\Visitor;
 use App\Entity\ZipcodePartial;
+use App\Helper\Security;
 use Doctrine\ORM\EntityManagerInterface;
 use Google\Cloud\Translate\V3\TranslationServiceClient;
 use Lcobucci\JWT\Builder;
@@ -38,11 +39,16 @@ class DefaultController extends AbstractController
      * @var LoggerInterface
      */
     private $logger;
+    /**
+     * @var Security
+     */
+    private $security;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, Security $security)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
+        $this->security = $security;
     }
 
     /**
@@ -333,6 +339,17 @@ class DefaultController extends AbstractController
         return new JsonResponse([
             'language' => $language,
             'translation' => $translatedText
+        ]);
+    }
+
+    /**
+     * @Route("/test-secret")
+     */
+    public function testSecret(Request $request)
+    {
+        $secret = $this->security->getSecret('TEST_SECRET');
+        return new JsonResponse([
+            'secret' => $secret,
         ]);
     }
 }

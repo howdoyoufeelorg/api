@@ -9,6 +9,7 @@
         "api-platform/api-pack": "^1.2",
         "doctrine/annotations": "^1.8",
         "google/apiclient": "^2.4",
+        "google/cloud-secret-manager": "^1.0",
         "google/cloud-translate": "^1.7",
         "lexik/jwt-authentication-bundle": "^2.6",
         "stof/doctrine-extensions-bundle": "^1.3",

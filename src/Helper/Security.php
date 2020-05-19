@@ -8,6 +8,7 @@
 namespace App\Helper;
 
 use App\Entity\User;
+use Google\Cloud\SecretManager\V1\SecretManagerServiceClient;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class Security
@@ -34,5 +35,14 @@ class Security
             in_array(User::ROLE_ADMIN, $roles) || in_array(User::ROLE_SUPERADMIN, $roles)
         ) return true;
         return false;
+    }
+
+    public function getSecret($secretId)
+    {
+        $client = new SecretManagerServiceClient();
+        $name = $client->secretVersionName(getenv('GOOGLE_CLOUD_PROJECT'), $secretId, 'latest');
+        $response = $client->accessSecretVersion($name);
+        $payload = $response->getPayload()->getData();
+        return $payload;
     }
 }

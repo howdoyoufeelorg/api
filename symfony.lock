@@ -143,6 +143,9 @@
     "google/cloud-core": {
         "version": "v1.36.2"
     },
+    "google/cloud-secret-manager": {
+        "version": "v1.0.0"
+    },
     "google/cloud-translate": {
         "version": "v1.7.2"
     },
