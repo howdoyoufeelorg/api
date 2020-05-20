@@ -8,6 +8,7 @@
 namespace App\Messenger;
 
 
+use App\Helper\Security;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Superadmin\Settings;
 use Swift_Attachment;
@@ -18,29 +19,21 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 class EmailNotificationHandler implements MessageHandlerInterface
 {
     /**
-     * @var Swift_Mailer
+     * @var Security
      */
-    private $mailer;
-    /**
-     * @var ParameterBagInterface
-     */
-    private $parameterBag;
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private $security;
 
-    public function __construct(Swift_Mailer $mailer, ParameterBagInterface $parameterBag, EntityManagerInterface $entityManager)
+    public function __construct(Security $security)
     {
-        $this->mailer = $mailer;
-        $this->parameterBag = $parameterBag;
-        $this->entityManager = $entityManager;
+        $this->security = $security;
     }
 
     public function __invoke(EmailNotification $message)
     {
-        $superadminSettings = $this->entityManager->getRepository(Settings::class)->find(1);
-        if($superadminSettings->getGoogleRefreshToken()) {
+        $googleRefreshToken = $this->security->getSecret(Security::SECRET_GOOGLE_API_REFRESH_TOKEN);
+        $googleClientId = $this->security->getSecret(Security::SECRET_GOOGLE_CLIENT_ID);
+        $googleClientSecret = $this->security->getSecret(Security::SECRET_GOOGLE_CLIENT_SECRET);
+        if($googleRefreshToken && $googleClientId && $googleClientSecret) {
             $messageMime = (new \Swift_Message($message->getSubject()))
                 ->setFrom($message->getFrom())
                 ->setTo($message->getTo())
@@ -58,12 +51,10 @@ class EmailNotificationHandler implements MessageHandlerInterface
                 if($message->getAttachmentMime()) $attachment->setContentType($message->getAttachmentMime());
                 $messageMime->attach($attachment);
             }
-            $client_id = $this->parameterBag->get('google_client_id');
-            $client_secret = $this->parameterBag->get('google_client_secret');
             $client = new \Google_Client();
-            $client->setClientId($client_id);
-            $client->setClientSecret($client_secret);
-            $client->refreshToken($superadminSettings->getGoogleRefreshToken());
+            $client->setClientId($googleClientId);
+            $client->setClientSecret($googleClientSecret);
+            $client->refreshToken($googleRefreshToken);
             $gmail = new \Google_Service_Gmail($client);
             $gmailMessage = new \Google_Service_Gmail_Message();
             $gmailMessage->setRaw($this->base64urlEncode($messageMime->toString()));

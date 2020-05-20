@@ -35,7 +35,7 @@ final class UserFilterConfigurator
     public function onKernelRequest(RequestEvent $event): void
     {
         $path = $event->getRequest()->getPathInfo();
-        if(preg_match('/api/', $path)) {
+        if(preg_match('/\/api/', $path)) {
             if (!$user = $this->getUser()) {
                 throw new \RuntimeException('There is no authenticated user.');
             }

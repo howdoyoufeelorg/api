@@ -8,8 +8,7 @@
 namespace App\Controller;
 
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Superadmin\Settings;
+use App\Helper\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route as Route;
@@ -18,13 +17,13 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SuperadminController extends AbstractController
 {
     /**
-     * @var EntityManagerInterface
+     * @var Security
      */
-    private $entityManager;
+    private $security;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(Security $security)
     {
-        $this->entityManager = $entityManager;
+        $this->security = $security;
     }
 
     /**
@@ -53,13 +52,7 @@ class SuperadminController extends AbstractController
             $access_token = $client->getAccessToken();
             $refresh_token = $client->getRefreshToken();
             if($refresh_token) {
-                $superadminSettings = $this->entityManager->getRepository(Settings::class)->find(1);
-                if (!$superadminSettings instanceof Settings) {
-                    $superadminSettings = new Settings();
-                    $this->entityManager->persist($superadminSettings);
-                }
-                $superadminSettings->setGoogleRefreshToken($refresh_token);
-                $this->entityManager->flush();
+                $this->security->setSecret(Security::SECRET_GOOGLE_API_REFRESH_TOKEN, $refresh_token);
             } else {
                 if($access_token) {
                     // It may happen that we get the access token but not the refresh token.
@@ -85,13 +78,13 @@ class SuperadminController extends AbstractController
 
     private function getGoogleClient()
     {
-        $client_id = $this->getParameter('google_client_id');
-        $client_secret = $this->getParameter('google_client_secret');
+        $client_id = $this->security->getSecret(Security::SECRET_GOOGLE_CLIENT_ID);
+        $client_secret = $this->security->getSecret(Security::SECRET_GOOGLE_CLIENT_SECRET);
         $client = new \Google_Client();
         $client->setClientId($client_id);
         $client->setClientSecret($client_secret);
         $client->setAccessType('offline');
-        $client->setScopes([\Google_Service_Gmail::GMAIL_SEND, \Google_Service_Translate::CLOUD_TRANSLATION]);
+        $client->setScopes([\Google_Service_Gmail::GMAIL_SEND]);
         $client->setRedirectUri($this->generateUrl('superadmin_authorize_api', [], UrlGeneratorInterface::ABSOLUTE_URL));
         return $client;
     }

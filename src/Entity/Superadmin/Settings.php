@@ -27,6 +27,7 @@ class Settings
      * @var string
      *
      * @ORM\Column(name="google_refresh_token", type="string", length=255, nullable=false)
+     * @deprecated the refresh token is now saved in GoogleCloud secret manager
      */
     protected $googleRefreshToken;
 

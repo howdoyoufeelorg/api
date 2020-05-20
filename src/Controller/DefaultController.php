@@ -26,6 +26,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DefaultController extends AbstractController
 {
@@ -339,17 +340,6 @@ class DefaultController extends AbstractController
         return new JsonResponse([
             'language' => $language,
             'translation' => $translatedText
-        ]);
-    }
-
-    /**
-     * @Route("/test-secret")
-     */
-    public function testSecret(Request $request)
-    {
-        $secret = $this->security->getSecret('TEST_SECRET');
-        return new JsonResponse([
-            'secret' => $secret,
         ]);
     }
 }

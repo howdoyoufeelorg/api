@@ -44,5 +44,6 @@ class EmailSendTest extends Command
             $this->messageBus->dispatch($invite);
         }
         $output->writeln('DONE');
+        return 0;
     }
 }
