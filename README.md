@@ -19,14 +19,15 @@ If you want to run the API with an arbitrary MySQL server, you need to configure
 DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name?serverVersion=5.7
 ```
 
-You also need to generate the SSH keys for the JWT token generator, like so:
+## Dependencies
+As usual, you need install dependencies via composer, like so:
 
 ``` bash
-$ mkdir -p config/jwt
-$ openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
-$ openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout  
+$ composer install 
 ```
-If the systems asks for a passphrase, you need to give one - but this passphrase also needs to be set in the .env file. Or you can use the one from the .env file, it's local anyway.
+The proces should also create the SSH keys for JWT token. You should see the SSH keys in api/config/jwt. If they're not created, there's a procedure here
+
+https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/index.md#generate-the-ssh-keys
 
 ## Creating the database
 The commands to create the database are:
@@ -56,7 +57,7 @@ These fixtures can be run from with the container, like so
 $ docker exec -it <api_container_name> bin/console doctrine:fixtures:load 
 ```
 
-## Test from browser
+## Test from a browser
 A very simple test would be to access this url in your browser:
 
 http://localhost:8080/api/docs
