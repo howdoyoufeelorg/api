@@ -30,7 +30,7 @@ use App\Annotation\UserAware;
  */
 class Instruction
 {
-    use TimestampableEntity;
+    //use TimestampableEntity;
 
     /**
      * @ORM\Id
@@ -73,6 +73,22 @@ class Instruction
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="instructions")
      */
     private $createdBy;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     * @Groups({"instructions_read"})
+     */
+    protected $createdAt;
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     * @Groups({"instructions_read"})
+     */
+    protected $updatedAt;
+
 
     public function __construct()
     {
@@ -226,5 +242,21 @@ class Instruction
     {
         $this->createdBy = $createdBy;
         return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt(): \DateTime
+    {
+        return $this->updatedAt;
     }
 }

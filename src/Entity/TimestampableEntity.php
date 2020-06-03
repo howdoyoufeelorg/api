@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 
 /**
@@ -16,7 +15,6 @@ trait TimestampableEntity
      * @var \DateTime
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime")
-     * @Groups({"instructions_read"})
      */
     protected $createdAt;
 
@@ -24,7 +22,6 @@ trait TimestampableEntity
      * @var \DateTime
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime")
-     * @Groups({"instructions_read"})
      */
     protected $updatedAt;
 
