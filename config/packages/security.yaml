@@ -15,7 +15,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         public:
-            pattern: ^/(get-(hash|questions|instructions)|post-survey)
+            pattern: ^/(get-(hash|questions|instructions)|post-survey|test-instructions)
             security: false
         superadmin:
             pattern: ^/(users|superadmin)

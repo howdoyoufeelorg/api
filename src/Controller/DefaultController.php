@@ -209,30 +209,50 @@ class DefaultController extends AbstractController
             if($visitor instanceof Visitor) {
                 $lastSurvey = $visitor->getLastSurvey();
                 $zipcode = $lastSurvey->getZipcode();
-                $geoEntities = $this->determineGeoEntities($zipcode);
                 $severity = $this->determineSeverity($lastSurvey->getSicknessIndex());
-                $instructions = $this->entityManager->getRepository(Instruction::class)->findInstructions($geoEntities, $severity);
-                $packedInstructions = [];
-                foreach($instructions as $instruction) {
-                   $contents = [];
-                   foreach($instruction->getContents() as $instructionContent)
-                   {
-                       $contents[$instructionContent->getLanguage()] = $instructionContent->getContent();
-                   }
-                   $packedInstructions[] = [
-                        'createdBy' => $instruction->getCreatedBy()->getFullname(),
-                        'createdAt' => $instruction->getCreatedAt()->format(DATE_ATOM),
-                        'updatedAt' => $instruction->getUpdatedAt()->format(DATE_ATOM),
-                        'contents' => $contents,
-                   ];
-                }
-                $data['instructions'] = $packedInstructions;
-                $data['resources'] = $this->determineResources($geoEntities);
+                $data = $this->packInstructionsForZipcode($zipcode, $severity);
                 $data['surveyId'] = $lastSurvey->getId();
             }
             $response->setData($data);
         }
         return $response;
+    }
+
+    /**
+     * @Route("/test-instructions/{severity}/{zipcode}", name="get_instructions", methods={"GET"})
+     */
+    public function testInstructions($severity, $zipcode)
+    {
+        $response = new JsonResponse();
+        $data = $this->packInstructionsForZipcode($zipcode, $severity);
+        $response->setData($data);
+        return $response;
+    }
+
+    private function packInstructionsForZipcode(string $zipcode, string $severity)
+    {
+        $data = [];
+        $geoEntities = $this->determineGeoEntities($zipcode);
+        $instructions = $this->entityManager->getRepository(Instruction::class)->findInstructions($geoEntities, $severity);
+        $packedInstructions = [];
+        foreach ($instructions as $instruction) {
+            /** @var Instruction $instruction */
+            $contents = [];
+            foreach ($instruction->getContents() as $instructionContent) {
+                $contents[$instructionContent->getLanguage()] = $instructionContent->getContent();
+            }
+            $geoentity = $this->determineInstructionGeoentityLevel($instruction);
+            $packedInstructions[] = [
+                'createdBy' => $instruction->getCreatedBy()->getFullname(),
+                'createdAt' => $instruction->getCreatedAt()->format(DATE_ATOM),
+                'updatedAt' => $instruction->getUpdatedAt()->format(DATE_ATOM),
+                'contents' => $contents,
+                'geoentity' => $geoentity
+            ];
+        }
+        $data['instructions'] = $packedInstructions;
+        $data['resources'] = $this->determineResources($geoEntities);
+        return $data;
     }
 
     private function calculateSicknessIndex(Question $question, string $answer)
@@ -280,6 +300,15 @@ class DefaultController extends AbstractController
             }
         }
         return [];
+    }
+
+    private function determineInstructionGeoentityLevel(Instruction $instruction) : string
+    {
+        if($instruction->getZipcode()) return 'zipcode';
+        if($instruction->getArea()) return 'area';
+        if($instruction->getState()) return 'state';
+        if($instruction->getCountry()) return 'country';
+        return '';
     }
 
     private function determineResources($geoEntities)
