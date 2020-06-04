@@ -219,7 +219,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/test-instructions/{severity}/{zipcode}", name="get_instructions", methods={"GET"})
+     * @Route("/test-instructions/{severity}/{zipcode}", name="test_instructions", methods={"GET"})
      */
     public function testInstructions($severity, $zipcode)
     {
