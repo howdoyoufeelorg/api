@@ -16,6 +16,7 @@ use App\Entity\Severity;
 use App\Entity\Survey;
 use App\Entity\Visitor;
 use App\Entity\ZipcodePartial;
+use App\Helper\CloudCache;
 use App\Helper\Security;
 use Doctrine\ORM\EntityManagerInterface;
 use Google\Cloud\Translate\V3\TranslationServiceClient;
@@ -26,7 +27,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DefaultController extends AbstractController
 {
@@ -44,12 +44,17 @@ class DefaultController extends AbstractController
      * @var Security
      */
     private $security;
+    /**
+     * @var CloudCache
+     */
+    private $cache;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, Security $security)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, Security $security, CloudCache $cache)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->security = $security;
+        $this->cache = $cache;
     }
 
     /**
@@ -163,29 +168,33 @@ class DefaultController extends AbstractController
      */
     public function getQuestions()
     {
-        $questions = [];
-        $questions_db = $this->entityManager->getRepository(Question::class)->findEnabledQuestions();
-        foreach($questions_db as $q) {
-            /** @var Question $q */
-            $labels = [];
-            foreach($q->getLabels() as $label) {
-                $labels[$label->getLanguage()] = $label->getLabel();
+        // Try to get the questions from Redis cache
+        $questions = $this->cache->getCache(CloudCache::CACHE_KEY_QUESTIONS);
+        if(empty($questions) || !is_array($questions)) {
+            $questions_db = $this->entityManager->getRepository(Question::class)->findEnabledQuestions();
+            foreach ($questions_db as $q) {
+                /** @var Question $q */
+                $labels = [];
+                foreach ($q->getLabels() as $label) {
+                    $labels[$label->getLanguage()] = $label->getLabel();
+                }
+                $additionalDataLabels = [];
+                foreach ($q->getAdditionalDataLabels() as $label) {
+                    $additionalDataLabels[$label->getLanguage()] = $label->getLabel();
+                }
+                $questions[] = [
+                    'id' => $q->getId(),
+                    'questionNo' => $q->getQuestionNo(),
+                    'questionWeight' => $q->getQuestionWeight(),
+                    'type' => $q->getType(),
+                    'labels' => $labels,
+                    'required' => $q->getRequired(),
+                    'requiresAdditionalData' => $q->getRequiresAdditionalData(),
+                    'additionalDataType' => $q->getAdditionalDataType(),
+                    'additionalDataLabels' => $additionalDataLabels,
+                ];
             }
-            $additionalDataLabels = [];
-            foreach($q->getAdditionalDataLabels() as $label) {
-                $additionalDataLabels[$label->getLanguage()] = $label->getLabel();
-            }
-            $questions[] = [
-                'id' => $q->getId(),
-                'questionNo' => $q->getQuestionNo(),
-                'questionWeight' => $q->getQuestionWeight(),
-                'type' => $q->getType(),
-                'labels' => $labels,
-                'required' => $q->getRequired(),
-                'requiresAdditionalData' => $q->getRequiresAdditionalData(),
-                'additionalDataType' => $q->getAdditionalDataType(),
-                'additionalDataLabels' => $additionalDataLabels,
-            ];
+            $this->cache->setCache(CloudCache::CACHE_KEY_QUESTIONS, $questions);
         }
         return new JsonResponse([
             "questions" => $questions
@@ -232,26 +241,28 @@ class DefaultController extends AbstractController
     private function packInstructionsForZipcode(string $zipcode, string $severity)
     {
         $data = [];
-        $geoEntities = $this->determineGeoEntities($zipcode);
-        $instructions = $this->entityManager->getRepository(Instruction::class)->findInstructions($geoEntities, $severity);
-        $packedInstructions = [];
-        foreach ($instructions as $instruction) {
-            /** @var Instruction $instruction */
-            $contents = [];
-            foreach ($instruction->getContents() as $instructionContent) {
-                $contents[$instructionContent->getLanguage()] = $instructionContent->getContent();
+        if(empty($data) || !is_array($data)) {
+            $geoEntities = $this->determineGeoEntities($zipcode);
+            $instructions = $this->entityManager->getRepository(Instruction::class)->findInstructions($geoEntities, $severity);
+            $packedInstructions = [];
+            foreach ($instructions as $instruction) {
+                /** @var Instruction $instruction */
+                $contents = [];
+                foreach ($instruction->getContents() as $instructionContent) {
+                    $contents[$instructionContent->getLanguage()] = $instructionContent->getContent();
+                }
+                $geoentity = $this->determineInstructionGeoentityLevel($instruction);
+                $packedInstructions[] = [
+                    'createdBy' => $instruction->getCreatedBy()->getFullname(),
+                    'createdAt' => $instruction->getCreatedAt()->format(DATE_ATOM),
+                    'updatedAt' => $instruction->getUpdatedAt()->format(DATE_ATOM),
+                    'contents' => $contents,
+                    'geoentity' => $geoentity
+                ];
             }
-            $geoentity = $this->determineInstructionGeoentityLevel($instruction);
-            $packedInstructions[] = [
-                'createdBy' => $instruction->getCreatedBy()->getFullname(),
-                'createdAt' => $instruction->getCreatedAt()->format(DATE_ATOM),
-                'updatedAt' => $instruction->getUpdatedAt()->format(DATE_ATOM),
-                'contents' => $contents,
-                'geoentity' => $geoentity
-            ];
+            $data['instructions'] = $packedInstructions;
+            $data['resources'] = $this->determineResources($geoEntities);
         }
-        $data['instructions'] = $packedInstructions;
-        $data['resources'] = $this->determineResources($geoEntities);
         return $data;
     }
 
