@@ -17,14 +17,18 @@ class CloudCache
     const CACHE_KEY_QUESTIONS = 'hdyf_questions';
     const CACHE_KEY_INSTRUCTIONS = 'hdyf_instructions';
 
-    public function setCache($key, $value)
+    public function setCache(string $key, $value, int $timeout = 0)
     {
         $redis = $this->getRedis();
-        $redis->set($key, $value);
+        if($timeout) {
+            $redis->setex($key, $timeout, $value);
+        } else {
+            $redis->set($key, $value);
+        }
         $redis->close();
     }
 
-    public function getCache($key)
+    public function getCache(string $key)
     {
         $redis = $this->getRedis();
         $value = $redis->get($key);
@@ -32,7 +36,7 @@ class CloudCache
         return $value;
     }
 
-    public function clearCache($key)
+    public function clearCache(string $key)
     {
         $redis = $this->getRedis();
         $redis->del($key);
@@ -47,8 +51,8 @@ class CloudCache
         return $redis;
     }
 
-    public function constructInstructionsKey($zipcode, $severity)
+    public function constructInstructionsKey(string $zipcode, string $severity)
     {
-        return self::CACHE_KEY_INSTRUCTIONS."_${zipcode}_${severity}";
+        return self::CACHE_KEY_INSTRUCTIONS.":${zipcode}:${severity}";
     }
 }

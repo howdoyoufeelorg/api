@@ -240,7 +240,8 @@ class DefaultController extends AbstractController
 
     private function packInstructionsForZipcode(string $zipcode, string $severity)
     {
-        $data = [];
+        $cacheKey = $this->cache->constructInstructionsKey($zipcode, $severity);
+        $data = $this->cache->getCache($cacheKey);
         if(empty($data) || !is_array($data)) {
             $geoEntities = $this->determineGeoEntities($zipcode);
             $instructions = $this->entityManager->getRepository(Instruction::class)->findInstructions($geoEntities, $severity);
@@ -262,6 +263,7 @@ class DefaultController extends AbstractController
             }
             $data['instructions'] = $packedInstructions;
             $data['resources'] = $this->determineResources($geoEntities);
+            $this->cache->setCache($cacheKey, $data, 3600);
         }
         return $data;
     }
@@ -294,15 +296,16 @@ class DefaultController extends AbstractController
         return Severity::MEDIUM;
     }
 
-    private function determineGeoEntities($zipcode)
+    private function determineGeoEntities(string $zipcode) : array
     {
-        for($i=3; $i>0; $i--) {
+        $geoentities = [];
+        for ($i = 3; $i > 0; $i--) {
             $partial = substr($zipcode, 0, $i);
             $zipcodePartials = $this->entityManager->getRepository(ZipcodePartial::class)->findBy(['partial' => $partial]);
-            if($zipcodePartials) {
+            if ($zipcodePartials) {
                 /** @var ZipcodePartial $firstMatchingPartial */
                 $firstMatchingPartial = current($zipcodePartials);
-                return [
+                $geoentities = [
                     'area' => $firstMatchingPartial->getArea(),
                     'state' => $firstMatchingPartial->getArea()->getState(),
                     'country' => $firstMatchingPartial->getArea()->getState()->getCountry(),
@@ -310,7 +313,7 @@ class DefaultController extends AbstractController
                 ];
             }
         }
-        return [];
+        return $geoentities;
     }
 
     private function determineInstructionGeoentityLevel(Instruction $instruction) : string

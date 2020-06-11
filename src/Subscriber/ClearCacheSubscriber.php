@@ -7,10 +7,14 @@
 
 namespace App\Subscriber;
 
+use App\Entity\Area;
+use App\Entity\Country;
 use App\Entity\Instruction;
 use App\Entity\InstructionContent;
 use App\Entity\Question;
 use App\Entity\QuestionLabel;
+use App\Entity\State;
+use App\Entity\ZipcodePartial;
 use App\Helper\CloudCache;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
@@ -58,16 +62,6 @@ class ClearCacheSubscriber implements EventSubscriber
         if ($entity instanceof Question || $entity instanceof QuestionLabel) {
             $this->cloudCache->clearCache(CloudCache::CACHE_KEY_QUESTIONS);
         }
-        // The Instruction cache is a bit complicated. Will have to be rethinked.
-        if ($entity instanceof Instruction) {
-//            $zipcode = $entity->getZipcode();
-//            $severity = $entity->getSeverity();
-//            $this->cloudCache->clearCache($this->cloudCache->constructInstructionsKey($zipcode, $severity));
-        }
-        if ($entity instanceof InstructionContent) {
-//            $zipcode = $entity->getInstruction()->getZipcode();
-//            $severity = $entity->getInstruction()->getSeverity();
-//            $this->cloudCache->clearCache($this->cloudCache->constructInstructionsKey($zipcode, $severity));
-        }
+        // The Instruction cache has ttl=1hr so it does not have to be cleared manually
     }
 }

@@ -22,7 +22,7 @@ class InstructionRepository extends ServiceEntityRepository
     /**
      * @return Instruction[]
      */
-    public function findInstructions($geoEntities, $severity)
+    public function findInstructions(array $geoEntities, string $severity, $maxResults = 0)
     {
         $countryWhere = $stateWhere = $areaWhere = $zipWhere = null;
         $parameters = ['severity' => $severity];
@@ -46,6 +46,7 @@ class InstructionRepository extends ServiceEntityRepository
         $qb->where('i.severity = :severity');
         $qb->andWhere($qb->expr()->orX($countryWhere, $stateWhere, $areaWhere, $zipWhere));
         $qb->setParameters($parameters);
+        if($maxResults) $qb->setMaxResults($maxResults);
         $qb->orderBy('i.updatedAt', 'DESC');
         $query = $qb->getQuery();
         return $query->execute();

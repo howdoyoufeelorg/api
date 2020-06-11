@@ -10,7 +10,9 @@ namespace App\Command;
 
 use App\Helper\CloudCache;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CloudRedisTest extends Command
@@ -28,10 +30,21 @@ class CloudRedisTest extends Command
         $this->cache = $cache;
     }
 
+    protected function configure()
+    {
+        $this->addArgument('key', InputArgument::REQUIRED, 'Key to query');
+        $this->addOption('remove', '-r', InputOption::VALUE_NONE,'Remove key');
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $retval = $this->cache->getCache(CloudCache::CACHE_KEY_QUESTIONS);
-        $output->writeln(is_array($retval) ? print_r($retval, true) : $retval);
+        $key = $input->getArgument('key');
+        if($input->getOption('remove')) {
+            $this->cache->clearCache($key);
+        } else {
+            $retval = $this->cache->getCache($key);
+            $output->writeln(is_array($retval) ? print_r($retval, true) : $retval);
+        }
         $output->writeln('DONE');
     }
 }
