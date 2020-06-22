@@ -221,6 +221,7 @@ class DefaultController extends AbstractController
                 $severity = $this->determineSeverity($lastSurvey->getSicknessIndex());
                 $data = $this->packInstructionsForZipcode($zipcode, $severity);
                 $data['surveyId'] = $lastSurvey->getId();
+                $data['severity'] = $severity;
             }
             $response->setData($data);
         }
