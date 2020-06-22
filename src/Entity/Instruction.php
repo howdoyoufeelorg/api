@@ -24,7 +24,7 @@ use App\Annotation\UserAware;
  *     normalizationContext={"groups"={"instructions_read"}},
  *     denormalizationContext={"groups"={"instructions_write"}, "enable_max_depth"=true}
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "country", "state", "area", "zipcode", "createdAt", "updatedAt"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "country", "state", "area", "zipcode", "createdAt", "updatedAt"}, arguments={"orderParameterName"="sort"})
  * @Gedmo\Loggable
  * @UserAware(userFieldName="created_by_id")
  */

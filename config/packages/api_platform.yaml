@@ -8,6 +8,14 @@ api_platform:
         json: ['application/merge-patch+json']
     swagger:
         versions: [3]
+    collection:
+        pagination:
+            enabled: true
+            items_per_page: 200
+            client_enabled: true
+            client_items_per_page: true
+            enabled_parameter_name: pagination
+            items_per_page_parameter_name: perPage
 doctrine:
     orm:
         filters:

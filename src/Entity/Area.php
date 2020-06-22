@@ -19,7 +19,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  * @ORM\Entity
  * @ORM\Table(name="areas")
  * @ApiResource(
- *     attributes={"pagination_enabled"=false},
  *     normalizationContext={"groups"={"areas_read", "geoentity_read"}},
  *     denormalizationContext={"groups"={"areas_write", "geoentity_write"}}
  * )
